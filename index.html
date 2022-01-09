@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html land="en">
+    <head>
+
+        <link rel="stylesheet" href="sodoku.css?2">
+
+    </head>
+
+    <body>
+        <div class="container">
+            <div id="range-container">
+                <p>Enter the number of givens you would like to start with, under 23 ish will take a while and be quite hard</p>
+                <form id="inputForm">
+                    <!-- https://stackoverflow.com/questions/10004723/html5-input-type-range-show-range-value -->
+                    <input type="range" name="amountRange" id="slider" min="17" max="80" value="30" oninput="this.form.amountInput.value=this.value" />
+                    <input type="number" name="amountInput" id="numberinput" min="17" max="80" value="30" oninput="this.form.amountRange.value=this.value" />
+                    <input type="submit" value="Play" id="playbtn">
+                </form>
+                
+
+            </div>
+            
+            <div id="sodoku-container">
+                <div id="notes-checkbox-container"></div>
+            </div>
+            <div id="help-section-container">
+                <div id="help-button-container"></div>
+            </div>
+        </div>
+        <script src="generator.js?2"></script>
+        <script src="strats.js?"></script>
+        <script src="sodoku.js?2"></script>
+
+    </body>
+
+</html>
