@@ -345,11 +345,11 @@ async function fillGrid(givens) {
         let resp;
 
         if(givens == 21) {
-            resp = await fetch("/boards1.json");
+            resp = await fetch("boards1.json");
 
             
         } else {
-            resp = await fetch("/boards.json");
+            resp = await fetch("boards.json");
         }
         let data = await resp.json();
 
