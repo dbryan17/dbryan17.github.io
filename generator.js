@@ -340,22 +340,24 @@ async function fillGrid(givens) {
         }
     }
 
-    if(givens < 26) {
+    if(givens < 26 && givens > 20) {
 
-        let resp;
+       
+        let boards;
 
         if(givens == 21) {
-            resp = await fetch("./boards/boards1.json");
-
-            
-        } else {
-            resp = await fetch("./boards/boards.json");
+            boards = boards21
+        } else if(givens == 22) {
+            boards = boards22
+        } else if(givens == 23) {
+            boards = boards23
+        } else if(givens == 24) {
+            boards = boards24
+        } else if(givens == 25) {
+            boards = boards25
         }
-        let data = await resp.json();
 
-        let boards = data[givens - 17].boards;
 
-  
 
         let toGet = getRandomInt(boards.length);
 
