@@ -340,7 +340,7 @@ async function fillGrid(givens) {
         }
     }
 
-    if(givens < 26 && givens > 20) {
+    if(givens < 25 && givens > 20) {
 
        
         let boards;
@@ -353,8 +353,6 @@ async function fillGrid(givens) {
             boards = boards23
         } else if(givens == 24) {
             boards = boards24
-        } else if(givens == 25) {
-            boards = boards25
         }
 
 
