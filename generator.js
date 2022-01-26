@@ -321,8 +321,8 @@ function createFinal(solution_board, n) {
         }
         solution_board = old_board.map(arr => arr.map(el => el));
     }
-    console.log("here");
-    console.log(n);
+   
+   
     return false; 
 
 }

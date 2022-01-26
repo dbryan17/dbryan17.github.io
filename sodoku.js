@@ -522,7 +522,7 @@ function getInitialHelp() {
 
     //let naked_single = nakedSingle(current_b);
     if(naked_single) {
-        console.log(naked_single);
+       
         // make this a function - used in navigate too 
         let c = document.querySelector(`#cell${naked_single[0][0].toString()}${naked_single[0][1].toString()}`);
         c.focus();
@@ -547,6 +547,7 @@ async function startGame(givens) {
     let grid = await fillGrid(givens);
     document.querySelector("#sodoku-container").appendChild(board);
     //populateBoard(0);
+    console.log(grid);
 
     // TODO make fill grid return a promise and display loading message here 
     

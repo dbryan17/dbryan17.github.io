@@ -135,14 +135,14 @@ function onlyOptionInGroup(poss_board, board) {
                 if(options[p] === 1) {
                     // found!!
                     let toH = onlyOptionInGroupHelper(p + 1, bigRow, bigCol, board)
-                    console.log("found")
+           
                     // find it again 
                     for(let ii = bigRow * 3; ii < bigRow * 3 + 3; ii++) {
                         for(let jj = bigCol * 3; jj < bigCol * 3 + 3; jj++) {
                             for(let g = 0; g < poss_board[ii][jj].length; g++) {
                                 if(poss_board[ii][jj][g] === (p + 1).toString()) {
                                     // find cords!
-                                    console.log("hereeerererer")
+                                 
                                     return [[ii, jj], [(p + 1).toString()], toH];
                                 }
                             }
@@ -193,7 +193,7 @@ function onlyOptionInGroupHelper(num, bigRow, bigCol, board) {
 
 function onlyOptionInRow(poss_board, board) {
 
-    console.log("start")
+
 
 
     // go through every row 
@@ -207,7 +207,7 @@ function onlyOptionInRow(poss_board, board) {
         // go through options
         for(let p = 0; p < options.length; p++) {
             if(options[p] === 1) {
-                console.log("found")
+     
                 // found one!
 
                 //let toSearch = []
