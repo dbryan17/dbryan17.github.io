@@ -33,6 +33,10 @@ function myDrawRect(startX, startY, endX, endY) {
 
   }
 
+  if(startY === endY || startX === endX) {
+    return
+  }
+
   draw(myModule, myGenPixles, startX, startY, endX, endY, false)
 
 }
