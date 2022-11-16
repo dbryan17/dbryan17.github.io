@@ -1,0 +1,27 @@
+#container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+#mandlbrotCanvas {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #000000;
+  position: absolute;
+  z-index: 0 !important;
+}
+
+#rectCanvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border: 1px solid #000000;
+  left: 0;
+  top: 0;
+  z-index: 1 !important;
+}
+
+body {
+  margin: 0px 0px 0px 0px;
+}
