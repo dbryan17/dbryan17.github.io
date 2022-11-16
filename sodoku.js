@@ -1,13 +1,8 @@
 "use strict";
-
 let errors = [];
-
 let help_stage = 0;
-
 let help;
-
 let help_highlights = [];
-
 
 
 function createBoard() {
