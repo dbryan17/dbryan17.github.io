@@ -267,31 +267,31 @@ function changeLayout() {
 
 var tappedNode;
 
-var adjacentNodesInput = document.querySelector("#adjacentNodes_checkbox");
-adjacentNodesInput.addEventListener("change", (evt) => {
-  if (tappedNode) {
-    colorAdjacent(tappedNode, adjacentNodesInput.checked);
-  }
-});
+// var adjacentNodesInput = document.querySelector("#adjacentNodes_checkbox");
+// adjacentNodesInput.addEventListener("change", (evt) => {
+//   if (tappedNode) {
+//     colorAdjacent(tappedNode, adjacentNodesInput.checked);
+//   }
+// });
 
-function colorAdjacent(node, color) {
-  let adjacentNodes = node
-    .connectedEdges()
-    .connectedNodes()
-    .filter((el) => el != node);
-  if (color) {
-    adjacentNodes.style({
-      "border-color": "blue",
-      "border-width": "8px",
-      "border-style": "double",
-    });
-    // "uncolor"
-  } else {
-    adjacentNodes.style({
-      "border-width": "0px",
-    });
-  }
-}
+// function colorAdjacent(node, color) {
+//   let adjacentNodes = node
+//     .connectedEdges()
+//     .connectedNodes()
+//     .filter((el) => el != node);
+//   if (color) {
+//     adjacentNodes.style({
+//       "border-color": "green",
+//       "border-width": "8px",
+//       "border-style": "double",
+//     });
+//     // "uncolor"
+//   } else {
+//     adjacentNodes.style({
+//       "border-width": "0px",
+//     });
+//   }
+// }
 
 
 
@@ -302,7 +302,7 @@ function selectNode(node) {
   if (tappedNode) {
     // uncolor previous
     // TODO TODO TODO TODO TODO make only if it was preivously colored - save time 
-    colorAdjacent(tappedNode, false);
+    // colorAdjacent(tappedNode, false);
     tappedNode.style({ "border-width": "0px" });
 
     // if (tappedNode === node) {
@@ -317,9 +317,9 @@ function selectNode(node) {
     "border-width": "8px",
     "border-style": "double",
   });
-  if (adjacentNodesInput.checked) {
-    colorAdjacent(node, true);
-  }
+  // if (adjacentNodesInput.checked) {
+  //   colorAdjacent(node, true);
+  // }
 
   tappedNode = node;
 
@@ -332,7 +332,23 @@ const selectCell = (cell) => selectNode(cy.getElementById(cell.id.slice(-2)));
 
 
 // TODO 
-function getNodeFromCell(cell) {}
+function colorNodeOutline(cell, color) {
+
+  let vertex = cy.getElementById(cell.id.slice(-2));
+  if(color) {
+  vertex.style({
+    "border-color": color,
+    "border-width": "8px",
+    "border-style": "double",
+  });
+} else {
+
+  vertex.style({ "border-width": "0px" });
+}
+
+
+
+}
 
 // TODO for when I get back before dinner 
 /*
