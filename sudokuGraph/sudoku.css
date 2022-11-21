@@ -1,0 +1,121 @@
+#container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#cy {
+  width: 650px;
+  height: 650px;
+}
+
+#grid-container {
+  padding-top: 15px;
+    width: 580px;
+    height: 580px;
+
+}
+
+
+#modalContainer {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+
+
+
+
+}
+
+
+
+
+.row {
+    display: inline-block;
+}
+.cell {
+    display: inline-block;  
+}
+
+.textContainer {
+    position: relative;
+    margin: auto;
+    width: 60px;
+    height: 60px;
+}
+
+.bigN {
+    position:absolute;
+    background-color: transparent;
+    z-index: 1;
+    border: hidden;
+    /* this makes it so the broswer doesn't have a highligh box */
+    outline: none;
+    margin: auto;
+    text-align: center;
+    caret-color: transparent;
+    /* padding: 0;
+    border: 0; */
+    font-size: 35px;
+    width: 60px;
+    height: 60px;
+    box-sizing: border-box;
+    color: darkslategray;
+}
+
+.bigN:disabled {
+    color: black;
+}
+
+.bigN:focus {
+    border: 2px solid blue;
+}
+
+.notesC {
+    position:absolute;
+    margin: auto;
+    z-index: -1;
+    width: 60px;
+    height: 60px;
+} 
+
+.notesRow {
+    position: relative;
+    margin: auto;
+    height: 20px;  
+}
+
+.note {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin: auto;
+    width: 33.3333%;
+    text-align: center;
+    color: darkslategray;
+}
+
+.col0, .col3, .col6 {
+    border-left: 3px solid black;
+}
+
+.row0, .row3, .row6 {
+    border-top: 3px solid black;
+}
+
+.col8 {
+    border-right: 3px solid black;
+}
+
+.row8 {
+    border-bottom: 3px solid black;
+}
+
+.col1, .col2, .col4, .col5, .col7, .col8 {
+    border-left: 1px solid black;
+}
+
+.row1, .row2, .row4, .row5, .row7, .row8 {
+    border-top: 1px solid black;
+}
+
+
