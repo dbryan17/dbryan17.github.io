@@ -1,0 +1,116 @@
+<!-- 
+    TODOTODOTOD
+    make it look cleaner
+-->
+
+<!DOCTYPE html>
+
+<html land="en">
+    <head>
+
+        <link rel="stylesheet" href="sudoku.css?3">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+
+    </head>
+
+    <body>
+      <div id="container">
+            <div id="range-container">
+                <p>Enter the number of givens you would like to start with, under 23 ish will take a while and be quite hard</p>
+                <form id="inputForm">
+                    <!-- https://stackoverflow.com/questions/10004723/html5-input-type-range-show-range-value -->
+                    <input type="range" name="amountRange" id="slider" min="17" max="80" value="30" oninput="this.form.amountInput.value=this.value" />
+                    <input type="number" name="amountInput" id="numberinput" min="17" max="80" value="30" oninput="this.form.amountRange.value=this.value" />
+                    <input type="submit" value="Play" id="playbtn">
+                </form>
+                
+
+            </div>
+            <div id="sudoku-container">
+      
+              <div id="notes-checkbox-container"></div>
+              <div id="help-button-container"></div>
+              <div id="grid-container"></div>
+            
+
+
+            </div>
+            <!-- <div id="help-section-container">
+                
+            </div> -->
+      
+
+          <div id="graph-container">
+        <div id="options" hidden>
+          <label for="layouts">Choose a layout:</label>
+          <select name="layouts" id="layouts_select">
+            <option value="grid" selected>Grid</option>
+            <option value="circle">Circle</option>
+          </select>
+          <input type="checkbox" id="animate_checkbox" name="animate" checked />
+          <label for="animate">Animate Layout Change</label>
+          <input
+            type="checkbox"
+            id="edgeColor_checkbox"
+            name="edgeColor"
+            unchecked
+          />
+          <label for="edgeColor">Color Edges</label>
+    
+          <input
+            type="checkbox"
+            id="adjacentNodes_checkbox"
+            name="adjacentNodes"
+            unchecked
+          />
+          <label id="adjacentNodes_label" for="adjacentNodes"
+            >Show Adjacent Nodes On Select</label
+          >
+          <input
+            type="checkbox"
+            id="labelNodes_checkbox"
+            name="labelNodes"
+            unchecked
+          />
+          <label id="labelNodes_label" for="labelNodes"
+            >Label Nodes With Number</label
+          >
+    
+          <input
+            type="checkbox"
+            id="resetLayout_checkbox"
+            name="resetLayout"
+            unchecked
+            hidden
+          />
+          <label id="resetLayout_label" for="resetLayout" hidden
+            >Reset Layout</label
+          >
+          <input type="submit" value="Solve sudoku with graph coloring" id="colorGrpah">
+          <div id="modalContainer" hidden>
+            <form id="solveForm">
+              <label for="alg">Choose a coloring algorithim</label>
+                <select name="alg" id="algSelect">
+                  <option value="rand">backtracking random</option>
+                  <option value="greedy">backtracking color fewest options first</option>
+                </select>
+                <input type="checkbox" id="animateColringCheckbox" name="animateColor" checked>
+                <label for="animateColor">Animate solving algorithim</label>
+                <input type="submit" value="Solve">
+                <input type="reset" value="Cancel">
+            </form>
+          </div>
+        </div>
+        <div id="cy" hidden></div>
+      </div>
+
+      </div>
+        <script src="graph.js"></script>
+        <script src="boardsJS.js"></script>
+        <script src="generator.js?3"></script>
+        <script src="strats.js?3"></script>
+        <script src="sudoku.js?3"></script>
+
+    </body>
+
+</html>
