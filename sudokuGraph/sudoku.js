@@ -216,6 +216,7 @@ function highlightErrors(num, el) {
         } else {
             e.style.color = "darkslategray"
         }
+        colorNodeOutline(e, false)
     }));
 
     // get rid of any errors that this element previously causes 
@@ -235,6 +236,8 @@ function highlightErrors(num, el) {
     errors.forEach(p => {
         p[0].style.color = "red";
         p[1].style.color = "red";
+        // first one is the one that is not the selected one
+        colorNodeOutline(p[1], "red")
     });
 
     
@@ -258,7 +261,6 @@ function handleDelete(el, notes) {
 // function called when a number is inputted, here before it actually gets placed - number only inputted when input is empty
 function enterNumber() {
 
-  console.log(this)
 
 
 
@@ -449,6 +451,7 @@ function helpReset() {
         } else {
             e.style.color = "darkslategray"
         }
+        colorNodeOutline(e, false);
     });
 
     help_highlights = [];
@@ -466,6 +469,7 @@ function helpHighlighter(cords) {
 
     help_highlights.forEach(el => {
         el.style.color = "orange"
+        colorNodeOutline(el, "orange")
     });
     
 }
