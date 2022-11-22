@@ -370,7 +370,8 @@ function checkWin() {
 
         let win_div = document.createElement("div")
         win_div.innerText = "YOU WON - NICE JOB"
-        document.querySelector("#container").insertBefore(win_div, document.querySelector("#sudoku-container"));
+        //document.querySelector("#container").insertBefore(win_div, document.querySelector("#sudoku-container"));
+        document.querySelector("#container").appendChild(win_div);
 
     }
 
@@ -495,6 +496,10 @@ function helpHighlighter(cords) {
 }
 
 function getHelp() {
+
+  if(animationRunning) {
+    return;
+  }
 
     // help = [cell cord ([y, x]), [answer], [cells to highlight]]
 
@@ -628,8 +633,16 @@ async function startGame(givens) {
 
       // event listner for focus so can naviagte graph too 
       el.addEventListener("focus", () => {
+        
         // for some reason when I put this as the handler, it triggers for every cell at begningg 
-        selectCell(el)
+        if(animationRunning) {
+          alert("Chilllll, let the animation finish dawg")
+          el.blur();
+          
+        } else {
+          selectCell(el)
+        }
+        
       })
       el.addEventListener("blur", () => {
         tappedNode.style({ "border-width": "0px" });
@@ -804,7 +817,7 @@ window.addEventListener("load", () => {
         let givens = document.querySelector("#slider").value;
         //evt.preventDefault;
         document.querySelector("#range-container").remove();
-
+        createSelection();
         startGame(givens);
 
 

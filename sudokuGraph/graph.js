@@ -1,18 +1,9 @@
-// TODO
-/*
-- when cy goes down, the clikcing doesnt work correctly
-
-*/
-
-
+ 
 
 ///////////////////
 // INITILIZATION //
 ///////////////////
 
-///// TODO /////
-// then, figure out the naviagting with arrow keys and wasd like in sudoku, maybe just make them do both
-// so, then I don't really need to implementet it here, just make them talk more 
 
 var cy;
 function generateVertices(sudoku) {
@@ -114,6 +105,32 @@ var color_map = {
   8: "indigo",
   9: "violet",
 };
+
+
+// sudoku 820
+function createSelection() {
+  console.log("creating selection")
+  let selectionContainer = document.querySelector("#selectionContainer")
+  selectionContainer.hidden=false;
+  numbers.forEach((num) => {
+    let colorEl = document.createElement("span");
+    colorEl.id = `${num}colorMapColor`
+    colorEl.style.color = color_map[num]
+    colorEl.innerText = `${color_map[num]}`
+    selectionContainer.appendChild(colorEl)
+
+    let numEl = document.createElement("span");
+    numEl.id = `${num}colorMapNumber`
+    numEl.style.paddingRight = "5px"
+    numEl.innerText = `:${num}`
+    selectionContainer.appendChild(numEl)
+  })
+
+  // append all 
+
+}
+
+
 
 
 // added locked becuase re does this when we do auto solve 
@@ -304,6 +321,7 @@ var tappedNode;
 
 
 function selectNode(node) {
+
 
   if(node.data("locked")) {
     return;
