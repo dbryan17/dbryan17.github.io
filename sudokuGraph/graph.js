@@ -1,3 +1,11 @@
+// TODO
+/*
+- deletes on sudoku cause no highlight on graph only when there are highlights
+
+*/
+
+
+
 ///////////////////
 // INITILIZATION //
 ///////////////////
@@ -303,7 +311,7 @@ function selectNode(node) {
     // uncolor previous
     // TODO TODO TODO TODO TODO make only if it was preivously colored - save time 
     // colorAdjacent(tappedNode, false);
-    tappedNode.style({ "border-width": "0px" });
+    //tappedNode.style({ "border-width": "0px" });
 
     // if (tappedNode === node) {
     //   // if tapped was the tap, set tapped to none
@@ -316,12 +324,30 @@ function selectNode(node) {
     "border-color": "blue",
     "border-width": "8px",
     "border-style": "double",
+    "border-opacity" : 1
   });
   // if (adjacentNodesInput.checked) {
   //   colorAdjacent(node, true);
   // }
 
   tappedNode = node;
+
+
+
+
+  // re color errors
+  if(errors.length > 0) {
+    // re color 
+    errors.forEach(p => p.forEach(e => {
+      if(e !== document.activeElement) {
+        console.log(e)
+        colorNodeOutline(e, "red")
+      }
+
+    }))
+
+
+  }
 
 
   // create selection box TDOTODTODOTDOTODTODTODTODTODTODTODTODTO
@@ -340,9 +366,9 @@ function colorNodeOutline(cell, color) {
     "border-color": color,
     "border-width": "8px",
     "border-style": "double",
+    "border-opacity": 1
   });
 } else {
-
   vertex.style({ "border-width": "0px" });
 }
 
@@ -383,7 +409,6 @@ document.addEventListener("keydown", (evt) => {
         tappedNode.style({"label" : `${tappedNode.data("number")}`})
 
       }
-      
       tappedNode.style({"background-color": `${color_map[tappedNode.data("number")]}`, "opacity": .8});
 
     
@@ -393,7 +418,7 @@ document.addEventListener("keydown", (evt) => {
 
     if(tappedNode) {
       tappedNode.data("number", "");
-      tappedNode.style({"label" : `${tappedNode.data("number")}`, "background-color" : "#666"})
+      tappedNode.style({"label" : `${tappedNode.data("number")}`, "background-color" : "#666", "opacity": 1})
 
 
     }
