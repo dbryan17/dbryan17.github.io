@@ -88,7 +88,7 @@
             >Reset Layout</label
           >
           <input type="submit" value="Solve sudoku with graph coloring" id="colorGrpah">
-          <div id="modalContainer" hidden>
+          <div class="modalContainer" id="solverModal" hidden>
             <form id="solveForm">
               <label for="alg">Choose a coloring algorithim</label>
                 <select name="alg" id="algSelect">
@@ -100,6 +100,12 @@
                 <input type="submit" value="Solve">
                 <input type="reset" value="Cancel">
             </form>
+          </div>
+          <div class="modalContainer" id="solverDoneModal"hidden>
+            <button id="stopAni" hidden>Stop Animation</button>
+            <button id="solverDoneButton">Close</button>
+          
+            
           </div>
         </div>
         <div id="cy" hidden></div>

@@ -721,6 +721,12 @@ async function startGame(givens) {
     document.querySelector("#helpbtn").addEventListener("click", getHelp);
     // event listner for reset button
     document.querySelector("#resetbtn").addEventListener("click", () => {
+      // need to close pop up
+      document.querySelector("#solverDoneModal").hidden = true
+      cy.resize();
+      // first need to stop any animation that are happening 
+      animationRunning = false;
+      ////// HERE 
       // reset sudoku 
       resetGrid()
 

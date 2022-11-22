@@ -304,6 +304,7 @@ var tappedNode;
 
 
 function selectNode(node) {
+
   if(node.data("locked")) {
     return;
   }
@@ -512,15 +513,23 @@ function edgeColorListener() {
 function labelNodesListener() {
   var labelNodesInput = document.querySelector("#labelNodes_checkbox");
 labelNodesInput.addEventListener("change", () => {
-  if (labelNodesInput.checked) {
-    //cy.nodes().style({ "label": "data(number)" });
-    cy.nodes().forEach((node) => node.style({"label" : `${node.data("number")}`}))
+  if(!animationRunning) {
+    if (labelNodesInput.checked) {
+      //cy.nodes().style({ "label": "data(number)" });
+      cy.nodes().forEach((node) => node.style({"label" : `${node.data("number")}`}))
+  
+      
+    } else {
+      cy.nodes().style({ "label": "" });
+  
+    }
 
-    
   } else {
-    cy.nodes().style({ "label": "" });
-
+    console.log("here")
+    labelNodesInput.checked = !labelNodesInput.checked
+    alert("Chilllll, let the animation finish dawg")
   }
+
 });
 
 }
