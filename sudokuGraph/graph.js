@@ -1,6 +1,6 @@
 // TODO
 /*
-- deletes on sudoku cause no highlight on graph only when there are highlights
+- when cy goes down, the clikcing doesnt work correctly
 
 */
 
@@ -454,6 +454,7 @@ function solveListener() {
 
     modalContainer.hidden = false;
     colorGraph.hidden = true;
+    cy.resize()
   })
 
   solveForm.addEventListener("submit", (evt) => {
@@ -461,6 +462,8 @@ function solveListener() {
     // document.querySelector("#opaque").remove();
     modalContainer.hidden = true;
     colorGraph.hidden = false;
+    console.log("resize")
+    cy.resize()
   })
 
   solveForm.addEventListener("reset", (evt) => {
@@ -468,6 +471,8 @@ function solveListener() {
     // document.querySelector("#opaque").remove();
     modalContainer.hidden = true;
     colorGraph.hidden = false;
+    console.log("resize")
+    cy.resize()
     
   })
 }
