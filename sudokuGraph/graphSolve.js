@@ -1,14 +1,10 @@
 // TODO TO FINISH PROJECT 
-// amke a button that will stop the animation and clear the queue then just color nodes
-// make a pop up after the nimation that says how many steps and a timer 
 // make hte animation stuff asynchornous
 // fix styling some 
 // clea up/ seprate files
 // comment code more
 // make a selection ting - maybe just say the color and number 
-// disable changing color, labeling nodes during the animation
-// handle when alg is false (user fucked it up)
-// when you click out of a node that had an error - it needs to highlight it like it does when you move to another one
+// disable changing color, labeling nodes
 ///////////
 
 
@@ -16,42 +12,35 @@
 
 function solveListener() {
   const colorGraph = document.querySelector("#colorGrpah")
-  const modalContainer = document.querySelector("#modalContainer")
+  const solverModal = document.querySelector("#solverModal")
   const solveForm = document.querySelector("#solveForm");
   colorGraph.addEventListener("click", (evt) => {
-
-//     const head = document.querySelector("head")
-//     const modalContainer = document.querySelector("#modalContainer")
-//     const parser = new DOMParser();
-//     const makeOpaque = parser.parseFromString(`
-//     <style id="opaque">
-//     * {
-// filter: opacity(85%);
-// }
-// </style>
-//     `, "text/html");
-
-    // head.appendChild(makeOpaque.firstElementChild);
-
-    modalContainer.hidden = false;
-    colorGraph.hidden = true;
-    cy.resize()
+    if(!animationRunning) {
+      solverModal.hidden = false;
+      colorGraph.hidden = true;
+      document.querySelector("#solverDoneModal").hidden = true
+      cy.resize()
+    } else {
+      alert("Chilllll, let the animation finish dawg")
+    }
   })
 
   solveForm.addEventListener("submit", (evt) => {
     evt.preventDefault();
     // document.querySelector("#opaque").remove();
-    modalContainer.hidden = true;
+    solverModal.hidden = true;
     colorGraph.hidden = false;
     cy.resize();
     graphSolve();
+    
 
+    
   })
 
   solveForm.addEventListener("reset", (evt) => {
     evt.preventDefault();
     // document.querySelector("#opaque").remove();
-    modalContainer.hidden = true;
+    solverModal.hidden = true;
     colorGraph.hidden = false;
 
     cy.resize()
@@ -68,6 +57,26 @@ function delay() {
 
 function changeNext() {
 
+  // stopped midway from button
+  if(!animationRunning) {
+    cy.nodes().filter((el) => !el.data("locked")).forEach((node) => {
+      // was called from reset, so these are not opqaue 
+      if(node.data("number") === "") {
+        node.style({"background-color": "#666", "opacity": 1})
+
+
+        // was called from button so want these to still be colored
+      } else {
+        node.style({"background-color": `${color_map[node.data("number")]}`, "opacity": .8})
+
+      }
+      
+
+    })
+    endSolve()
+    // console.log("")
+  }
+
   if(i < aniQueue.length) {
 
 
@@ -78,16 +87,13 @@ function changeNext() {
 
   } else {
     endSolve()
-    
-
   }
-
-
-
 }
 
 function endSolve() {
   // reset vars 
+  animationRunning = false;
+  document.querySelector("#stopAni").hidden = true; 
   i = 0;
   aniQueue = [];
   count = 0;
@@ -104,6 +110,22 @@ function endSolve() {
 
 }
 
+
+
+document.querySelector("#solverDoneButton").addEventListener("click", () => {
+  // close 
+  document.querySelector("#solverDoneModal").hidden=true;
+  cy.resize();
+
+})
+
+document.querySelector("#stopAni").addEventListener("click", () => {
+  // stop animation
+  animationRunning = false;
+})
+
+
+var animationRunning = false;
 function graphSolve() {
 
   count = 0;
@@ -124,20 +146,38 @@ function graphSolve() {
       throw new Exception("check the values of algSelect")
   }
 
+  let solverDoneModal = document.querySelector("#solverDoneModal");
+
+  // in case of not first alg
+  if(document.querySelector("#solveStats")) {
+    document.querySelector("#solveStats").remove()
+
+  }
+  let stats = document.createElement("span");
+  stats.id = "solveStats";
+
+
+  console.log(answer)
+
   if(!answer) {
     // solving algorithim failed
-
+    stats.innerText = `Solve failed, no valid solution due to user inputted values, sudoku reset`
     // need to save what the user had before --- in graph 
+  } else {
+    let end = Date.now()
+    let miliseconds = end - start;
+    stats.innerText = `Completed in ${miliseconds} miliseconds and ${count} step${count === 1 ? "" : "s"}`
   }
 
+  solverDoneModal.insertBefore(stats, solverDoneModal.firstChild)
+  solverDoneModal.hidden = false;
+  cy.resize()
 
-  let end = Date.now()
-  let miliseconds = end - start;
-  console.log(answer)
-  console.log(count)
-  console.log(miliseconds)
+
 
   if(document.querySelector("#animateColringCheckbox").checked) {
+    animationRunning = true;
+    document.querySelector("#stopAni").hidden=false;
     i = 0;
     aniTime = Math.floor(2000 / aniQueue.length);
     // starts the animation 
@@ -160,13 +200,12 @@ var aniQueue = []
 function checkGraph() {
   let bool = true;
   // each node
-  cy.nodes().every((node) => {
+  cy.nodes().forEach((node) => {
     // get the adjacent colors
     let adjColors = new Set(); 
     node.connectedEdges().connectedNodes().filter((el) => el != node).forEach((node) => adjColors.add(node.data("number")));
     if(adjColors.has(node.data("number"))) {
       bool = false 
-      return
     }
   })
   return bool;
@@ -184,6 +223,7 @@ function backtrackingFewestFirst() {
   // it, there may be no solution which means this would trigger but the board be inccorect
   if(unclored.length === 0) {
     // now check if it is correct
+    console.log(checkGraph())
     return checkGraph()
   }
 
@@ -237,6 +277,7 @@ function backtrackingFewestFirst() {
 
 
 }
+
 
 
 
@@ -308,9 +349,6 @@ function getPossibleColors(node) {
   let poss = numbers.filter((num) => !adjColors.has(num))
 
   return poss
-
-
-
 
 }
 
