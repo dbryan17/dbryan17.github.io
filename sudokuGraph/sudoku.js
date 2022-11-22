@@ -216,8 +216,16 @@ function highlightErrors(num, el) {
         } else {
             e.style.color = "darkslategray"
         }
-        colorNodeOutline(e, false)
+        // only color back if not the selected one 
+
+          console.log("gggg")
+          console.log(document.activeElement)
+          if(e !== document.activeElement) {
+            colorNodeOutline(e, false)
+
+          }
     }));
+
 
     // get rid of any errors that this element previously causes 
     errors = errors.filter(p => p[0] !== el);
@@ -238,6 +246,10 @@ function highlightErrors(num, el) {
         p[1].style.color = "red";
         // first one is the one that is not the selected one
         colorNodeOutline(p[1], "red")
+        if(p[0] !== document.activeElement) {
+          colorNodeOutline(p[0], "red")
+
+        }
     });
 
     
@@ -650,7 +662,7 @@ async function startGame(givens) {
             } else if(evt.key === "Backspace" || evt.key === "Delete") {
               // el.value="";
               el.value = "";
-              handleDelete(el);
+              handleDelete(el, document.querySelector("#notesCheckbox").checked);
 
             }
             
