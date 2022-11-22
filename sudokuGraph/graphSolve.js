@@ -4,7 +4,6 @@
 // clea up/ seprate files
 // comment code more
 // make a selection ting - maybe just say the color and number 
-// disable changing color, labeling nodes
 ///////////
 
 
