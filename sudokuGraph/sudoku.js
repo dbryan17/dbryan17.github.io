@@ -191,10 +191,20 @@ function createHelpButton() {
     const parser = new DOMParser();
 
     const helpbtn = parser.parseFromString(`
-        <button id="helpbtn" type="button">Help?</button> 
+        <button id="helpbtn" type="button">Help</button> 
     `, "text/html");
 
     document.querySelector("#help-button-container").appendChild(helpbtn.body.firstElementChild);
+}
+
+function createResetButton() {
+  const parser = new DOMParser();
+
+  const resetBtn = parser.parseFromString(`
+  <button id="resetbtn" type="button">Reset</button> 
+  `, "text/html");
+  document.querySelector("#reset-button-container").appendChild(resetBtn.body.firstElementChild);
+
 }
 
 function oneThroughNine(numStr) {
@@ -218,8 +228,6 @@ function highlightErrors(num, el) {
         }
         // only color back if not the selected one 
 
-          console.log("gggg")
-          console.log(document.activeElement)
           if(e !== document.activeElement) {
             colorNodeOutline(e, false)
 
@@ -606,6 +614,7 @@ async function startGame(givens) {
     document.querySelector("#sudoku-container").appendChild(instructions);
     createCheckbox();
     createHelpButton();
+    createResetButton();
 
     //////// TRYING GRAPH ///////////
     // first, create the graph
@@ -624,6 +633,20 @@ async function startGame(givens) {
       })
       el.addEventListener("blur", () => {
         tappedNode.style({ "border-width": "0px" });
+
+          // re color errors --- this is for when user clicks out and had an eror on selected node - need to color that node, if another node is selected, this gets trigger in selectNode function 
+  if(errors.length > 0) {
+    // re color 
+    errors.forEach(p => p.forEach(e => {
+      if(e !== document.activeElement) {
+        colorNodeOutline(e, "red")
+      }
+
+    }))
+
+
+  }
+
         // console.log("blur", el)
         // setTimeout(() => console.log(tappedNode), 20)
         // console.log(tappedNode)
@@ -648,7 +671,7 @@ async function startGame(givens) {
                 // if the checkbox isn't checked, the number is one through nine, and the value isn't zero
             } else if(!document.querySelector("#notesCheckbox").checked && oneThroughNine(evt.key) && el.value !== "") {
 
-                // set the value to the number - override
+                // the value to the number - override
                 el.value = evt.key
                 helpReset();
                 highlightErrors(el.value, el)
@@ -696,8 +719,67 @@ async function startGame(givens) {
 
     // event listner for help button 
     document.querySelector("#helpbtn").addEventListener("click", getHelp);
+    // event listner for reset button
+    document.querySelector("#resetbtn").addEventListener("click", () => {
+      // reset sudoku 
+      resetGrid()
 
 
+      // reset graph 
+      resetGraph()
+    });
+
+
+}
+
+function refillGrid() {
+  // reset notes 
+  document.querySelectorAll(".note").forEach((note) => {
+    note.innerHTML = ""
+  })
+
+  // reset help 
+  helpReset();
+
+  // reset errors 
+  errors = [];
+
+  document.querySelectorAll(".bigN").forEach((input) => {
+    if(!input.disabled) {
+      let node = cy.getElementById(input.id.slice(-2));
+      input.value = node.data("number")
+    } else {
+      // recolor 
+      input.style.color = "black"
+    }
+  })
+
+
+
+
+
+
+}
+
+function resetGrid() {
+  document.querySelectorAll(".bigN").forEach((input) => {
+    if(!input.disabled) {
+      input.value = "";
+    } else {
+      // recolor 
+      input.style.color = "black"
+    }
+  })
+  // reset help stuff 
+  helpReset();
+
+  // need to reset errors
+  errors = []
+
+  // now for notes
+  document.querySelectorAll(".note").forEach((note) => {
+    note.innerHTML = ""
+  })
 }
 
 

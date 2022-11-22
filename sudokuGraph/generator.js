@@ -3,7 +3,7 @@
 /// TODO shuffe boards to generate multiple boards from one things it solved
 
 
-const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+var numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 let solution_b;
 
