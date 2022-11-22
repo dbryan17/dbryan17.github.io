@@ -30,6 +30,7 @@
       
               <div id="notes-checkbox-container"></div>
               <div id="help-button-container"></div>
+              <div id="reset-button-container"></div>
               <div id="grid-container"></div>
             
 
@@ -91,11 +92,11 @@
             <form id="solveForm">
               <label for="alg">Choose a coloring algorithim</label>
                 <select name="alg" id="algSelect">
-                  <option value="rand">backtracking random</option>
-                  <option value="greedy">backtracking color fewest options first</option>
+                  <option value="fewestFirst">backtracking - color fewest options first</option>
+                  <option value="firstEmpty">backtracking - color first empty</option>
                 </select>
                 <input type="checkbox" id="animateColringCheckbox" name="animateColor" checked>
-                <label for="animateColor">Animate solving algorithim</label>
+                <label for="animateColor">Animate</label>
                 <input type="submit" value="Solve">
                 <input type="reset" value="Cancel">
             </form>
@@ -110,6 +111,7 @@
         <script src="generator.js?3"></script>
         <script src="strats.js?3"></script>
         <script src="sudoku.js?3"></script>
+        <script src="graphSolve.js"></script>
 
     </body>
 

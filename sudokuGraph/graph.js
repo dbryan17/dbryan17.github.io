@@ -116,13 +116,13 @@ var color_map = {
 };
 
 
+// added locked becuase re does this when we do auto solve 
 var stylesArray = [
   {
     selector: "node",
     style: {
-      "background-color": "#666",
       label: "",
-      "background-color": (node) => node.data("number") ? color_map[node.data("number")] :"#666"
+      "background-color": (node) => node.data("number") && node.data("locked") ? color_map[node.data("number")] :"#666"
     },
   },
   {
@@ -333,14 +333,11 @@ function selectNode(node) {
   tappedNode = node;
 
 
-
-
   // re color errors
   if(errors.length > 0) {
     // re color 
     errors.forEach(p => p.forEach(e => {
       if(e !== document.activeElement) {
-        console.log(e)
         colorNodeOutline(e, "red")
       }
 
@@ -349,8 +346,6 @@ function selectNode(node) {
 
   }
 
-
-  // create selection box TDOTODTODOTDOTODTODTODTODTODTODTODTODTO
 }
 
 
@@ -359,6 +354,8 @@ const selectCell = (cell) => selectNode(cy.getElementById(cell.id.slice(-2)));
 
 // TODO 
 function colorNodeOutline(cell, color) {
+
+  //console.log(errors)
 
   let vertex = cy.getElementById(cell.id.slice(-2));
   if(color) {
@@ -385,6 +382,27 @@ function colorNodeOutline(cell, color) {
 */
 
 
+
+function colorNode(node, empty) {
+
+  if(empty) {
+    node.style({"label" : `${node.data("number")}`, "background-color" : "#666", "opacity": 1});
+    return;
+    
+  }
+  
+  if(document.querySelector("#labelNodes_checkbox").checked) {
+    node.style({"label" : `${node.data("number")}`})
+
+  }
+  tappedNode.style({"background-color": `${color_map[node.data("number")]}`, "opacity": .8});
+
+  
+
+
+
+}
+
 function tmpGraphNavListeners() {
 
 
@@ -396,7 +414,7 @@ function tmpGraphNavListeners() {
   });
 
 
-  var gh = true;
+
 document.addEventListener("keydown", (evt) => {
   
 
@@ -405,11 +423,14 @@ document.addEventListener("keydown", (evt) => {
     if(tappedNode) {
       
       tappedNode.data("number", evt.key);
-      if(document.querySelector("#labelNodes_checkbox").checked) {
-        tappedNode.style({"label" : `${tappedNode.data("number")}`})
+  
 
-      }
-      tappedNode.style({"background-color": `${color_map[tappedNode.data("number")]}`, "opacity": .8});
+      colorNode(tappedNode, false);
+      // if(document.querySelector("#labelNodes_checkbox").checked) {
+      //   tappedNode.style({"label" : `${tappedNode.data("number")}`})
+
+      // }
+      // tappedNode.style({"background-color": `${color_map[tappedNode.data("number")]}`, "opacity": .8});
 
     
     }
@@ -418,7 +439,8 @@ document.addEventListener("keydown", (evt) => {
 
     if(tappedNode) {
       tappedNode.data("number", "");
-      tappedNode.style({"label" : `${tappedNode.data("number")}`, "background-color" : "#666", "opacity": 1})
+      colorNode(tappedNode, true)
+      // tappedNode.style({"label" : `${tappedNode.data("number")}`, "background-color" : "#666", "opacity": 1})
 
 
     }
@@ -428,54 +450,7 @@ document.addEventListener("keydown", (evt) => {
 
 }
 
-function solveListener() {
-  const colorGraph = document.querySelector("#colorGrpah")
-  const modalContainer = document.querySelector("#modalContainer")
-  const solveForm = document.querySelector("#solveForm");
-  colorGraph.addEventListener("click", (evt) => {
 
-//     const head = document.querySelector("head")
-//     const modalContainer = document.querySelector("#modalContainer")
-//     const parser = new DOMParser();
-//     const makeOpaque = parser.parseFromString(`
-//     <style id="opaque">
-//     * {
-// filter: opacity(85%);
-// }
-// </style>
-//     `, "text/html");
-
-    // head.appendChild(makeOpaque.firstElementChild);
-
-  
-
-    
-    
-
-    modalContainer.hidden = false;
-    colorGraph.hidden = true;
-    cy.resize()
-  })
-
-  solveForm.addEventListener("submit", (evt) => {
-    evt.preventDefault();
-    // document.querySelector("#opaque").remove();
-    modalContainer.hidden = true;
-    colorGraph.hidden = false;
-    console.log("resize")
-    cy.resize()
-  })
-
-  solveForm.addEventListener("reset", (evt) => {
-    evt.preventDefault();
-    // document.querySelector("#opaque").remove();
-    modalContainer.hidden = true;
-    colorGraph.hidden = false;
-    console.log("resize")
-    cy.resize()
-    
-  })
-}
 
 
 
@@ -540,13 +515,29 @@ labelNodesInput.addEventListener("change", () => {
   if (labelNodesInput.checked) {
     //cy.nodes().style({ "label": "data(number)" });
     cy.nodes().forEach((node) => node.style({"label" : `${node.data("number")}`}))
-    //cy.nodes().forEach((node) => console.log(node.data()));
+
     
   } else {
     cy.nodes().style({ "label": "" });
 
   }
 });
+
+}
+
+
+function resetGraph() {
+  cy.nodes().forEach((node) => {
+    // if it is not a locked node
+    if(!node.data("locked")) {
+      // reset node body color 
+      node.data("number", "");
+      colorNode(node, true);
+    }
+    // in all cases - need to reset the border 
+  
+    node.style({ "border-width": "0px" });
+  })
 
 }
 
