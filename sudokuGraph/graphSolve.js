@@ -1,9 +1,7 @@
 // TODO TO FINISH PROJECT 
-// make hte animation stuff asynchornous
 // fix styling some 
 // clea up/ seprate files
 // comment code more
-// make a selection ting - maybe just say the color and number 
 ///////////
 
 

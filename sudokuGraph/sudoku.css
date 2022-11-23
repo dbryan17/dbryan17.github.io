@@ -1,30 +1,96 @@
+
+/* page container styling */
 #container {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: row;
+  margin: 10px;
+}
+#container.start {
+  flex-direction: column;
+}
+
+
+/* sudoku container and childern (other than grid) styling*/
+#sudoku-container {
+  display:flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+#sudoku-container.start {
+  display: none;
+}
+
+#options-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+#sudoku-only {
+  display: flex;
+}
+#both-options {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.option {
+  padding: 5px;
+}
+
+
+/* grid will alwasy be 580x580 based on chilern styling*/
+#grid-container {
+    margin: 5px -2px;
+    width: 580px;
+    height: 580px;
+}
+
+
+
+
+
+/* graph container and childern styling */
+#graph-container {
+  display:flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+#graph-container.start {
+  display: none;
+}
+
+#options {
+
 }
 
 #cy {
-  width: 650px;
-  height: 650px;
-}
-
-#grid-container {
-  padding-top: 15px;
-    width: 580px;
-    height: 580px;
-
+  margin: 5px 0px;
+  width: 700px;
+  height: 700px;
 }
 
 
+
+
+/* random class style*/
 .modalContainer {
   border-radius: 5px;
+  border-style: solid;
   background-color: #f2f2f2;
-  padding: 20px;
 }
 
 
 
 
+
+
+
+/*
+grid styling 
+*/
 .row {
     display: inline-block;
 }
@@ -44,13 +110,10 @@
     background-color: transparent;
     z-index: 1;
     border: hidden;
-    /* this makes it so the broswer doesn't have a highligh box */
     outline: none;
     margin: auto;
     text-align: center;
     caret-color: transparent;
-    /* padding: 0;
-    border: 0; */
     font-size: 35px;
     width: 60px;
     height: 60px;
@@ -113,5 +176,3 @@
 .row1, .row2, .row4, .row5, .row7, .row8 {
     border-top: 1px solid black;
 }
-
-

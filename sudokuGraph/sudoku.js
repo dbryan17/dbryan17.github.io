@@ -614,16 +614,17 @@ async function startGame(givens) {
 
 
 
-    let instructions = document.createElement("p");
-    instructions.innerText = "You can move around with arrow keys and switch in and out of notes mode with the tab key"
-    document.querySelector("#sudoku-container").appendChild(instructions);
+    // let instructions = document.createElement("div");
+    // instructions.id = "instructionsContainer"
+    // instructions.innerText = "You can move around with arrow keys and switch in and out of notes mode with the tab key"
+    // document.querySelector("#container").appendChild(instructions);
     createCheckbox();
     createHelpButton();
     createResetButton();
 
     //////// TRYING GRAPH ///////////
     // first, create the graph
-    document.querySelector("#options").hidden = false;
+    document.querySelector("#graph-options").hidden = false;
     document.querySelector("#cy").hidden = false;
     await generateGraph(grid);
     
@@ -817,7 +818,11 @@ window.addEventListener("load", () => {
         let givens = document.querySelector("#slider").value;
         //evt.preventDefault;
         document.querySelector("#range-container").remove();
-        createSelection();
+        document.querySelector("#header").remove()
+        document.querySelector("#container").classList.remove("start")
+        document.querySelector("#sudoku-container").classList.remove("start")
+        document.querySelector("#graph-container").classList.remove("start")
+        // createSelection();
         startGame(givens);
 
 
