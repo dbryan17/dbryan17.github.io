@@ -1,31 +1,26 @@
- 
-
 ///////////////////
 // INITILIZATION //
 ///////////////////
 
-
 var cy;
 function generateVertices(sudoku) {
-
-
   return sudoku.reduce((acc, row, row_idx) => {
-    return acc.concat(row.map((cell, col_idx) => {
-      return {
-        groups: "nodes",
-        data: {
-          id: `${row_idx.toString()}${col_idx.toString()}`,
-          col: `${col_idx.toString()}`,
-          row: `${row_idx.toString()}`,
-          number: cell === "-1" ? "" : cell,
-          locked: !(cell === "-1")
-      }
-    }
-    }))
-  },[])
+    return acc.concat(
+      row.map((cell, col_idx) => {
+        return {
+          groups: "nodes",
+          data: {
+            id: `${row_idx.toString()}${col_idx.toString()}`,
+            col: `${col_idx.toString()}`,
+            row: `${row_idx.toString()}`,
+            number: cell === "-1" ? "" : cell,
+            locked: !(cell === "-1"),
+          },
+        };
+      })
+    );
+  }, []);
 }
-
-
 
 function generateEdges() {
   let edgeArray = [];
@@ -92,8 +87,6 @@ function generateEdges() {
   return edgeArray;
 }
 
-
-
 var color_map = {
   1: "red",
   2: "orange",
@@ -106,40 +99,58 @@ var color_map = {
   9: "violet",
 };
 
-
-// sudoku 820
 function createSelection() {
-  console.log("creating selection")
-  let selectionContainer = document.querySelector("#selectionContainer")
-  selectionContainer.hidden=false;
+  console.log("creating selection");
+  let selectionContainer = document.querySelector("#selectionContainer");
+  selectionContainer.hidden = false;
   numbers.forEach((num) => {
-    let colorEl = document.createElement("span");
-    colorEl.id = `${num}colorMapColor`
-    colorEl.style.color = color_map[num]
-    colorEl.innerText = `${color_map[num]}`
-    selectionContainer.appendChild(colorEl)
+    const parser = new DOMParser();
 
-    let numEl = document.createElement("span");
-    numEl.id = `${num}colorMapNumber`
-    numEl.style.paddingRight = "5px"
-    numEl.innerText = `:${num}`
-    selectionContainer.appendChild(numEl)
-  })
+    const ele = parser.parseFromString(
+      `
+    <div class="option">
+    <span id="${num}colorMapColor" style="color:${color_map[num]}">
+    ${color_map[num]} 
+    </span>
 
-  // append all 
+    <span id="${num}colorMapNumber">
+    : ${num}
+    </span>
+    </div>
+    `,
+      "text/html"
+    );
 
+    // style="padingRight: 5px"
+
+    selectionContainer.appendChild(ele.body.firstElementChild);
+
+    // let colorEl = document.createElement("span");
+    // colorEl.id = `${num}colorMapColor`;
+    // colorEl.style.color = color_map[num];
+    // colorEl.innerText = `${color_map[num]}`;
+    // selectionContainer.appendChild(colorEl);
+
+    // let numEl = document.createElement("span");
+    // numEl.id = `${num}colorMapNumber`;
+    // numEl.style.paddingRight = "5px";
+    // numEl.innerText = `:${num}`;
+    // selectionContainer.appendChild(numEl);
+  });
+
+  // append all
 }
 
-
-
-
-// added locked becuase re does this when we do auto solve 
+// added locked becuase re does this when we do auto solve
 var stylesArray = [
   {
     selector: "node",
     style: {
       label: "",
-      "background-color": (node) => node.data("number") && node.data("locked") ? color_map[node.data("number")] :"#666"
+      "background-color": (node) =>
+        node.data("number") && node.data("locked")
+          ? color_map[node.data("number")]
+          : "#666",
     },
   },
   {
@@ -151,9 +162,14 @@ var stylesArray = [
   },
 ];
 
-var layout = { name: "grid", rows: 9, cols: 9, padding: 30, fit: true };
-
-
+var layout = {
+  name: "grid",
+  rows: 9,
+  cols: 9,
+  padding: 30,
+  fit: true,
+  padding: 30,
+};
 
 async function generateGraph(sudoku) {
   cy = cytoscape({
@@ -171,55 +187,45 @@ async function generateGraph(sudoku) {
     layout: layout,
   });
 
-  addDragListener()
-  addLayoutListeners()
-  labelNodesListener()
-  tmpGraphNavListeners()
-  edgeColorListener()
-  solveListener()
+  addDragListener();
+  addLayoutListeners();
+  labelNodesListener();
+  tmpGraphNavListeners();
+  edgeColorListener();
+  solveListener();
 
-
-
-  return
-
-
+  return;
 }
-
 
 var oneDrag = () => {
   showLayoutReset(true);
 };
 function addDragListener() {
   cy.one("drag", oneDrag);
-
 }
 
-
 function addLayoutListeners() {
-
-    // means it must have been checked
+  // means it must have been checked
   document
-  .querySelector("#resetLayout_btn")
-  .addEventListener("click", (evt) => {
-    var layout = cy.layout({
-      name: document.querySelector("#layouts_select").value,
-      animate: false,
-      fit: true,
+    .querySelector("#resetLayout_btn")
+    .addEventListener("click", (evt) => {
+      var layout = cy.layout({
+        name: document.querySelector("#layouts_select").value,
+        animate: false,
+        fit: true,
+        padding: 30,
+      });
+      layout.run();
+      showLayoutReset(false);
+      cy.removeListener("drag", oneDrag);
+      cy.one("drag", oneDrag);
     });
-    layout.run();
-    showLayoutReset(false);
-    cy.removeListener("drag", oneDrag);
-    cy.one("drag", oneDrag);
-  });
 
   // will run only on changed value
   document
-  .querySelector("#layouts_select")
-  .addEventListener("input", changeLayout);
-
-
+    .querySelector("#layouts_select")
+    .addEventListener("input", changeLayout);
 }
-
 
 ///////////////////
 // INITILIZATION //
@@ -238,7 +244,6 @@ function showLayoutReset(show) {
 var layoutRunning = false;
 var redo = false;
 var toLayout;
-
 
 function handleStop() {
   layoutRunning = false;
@@ -262,6 +267,7 @@ function changeLayout() {
     name: layoutSelection,
     animate: document.querySelector("#animate_checkbox").checked,
     fit: true,
+    padding: 30,
     animationDuration: 2000,
     ready: () => {
       layoutRunning = true;
@@ -280,7 +286,6 @@ function changeLayout() {
   cy.removeListener("rag", oneDrag);
   cy.one("drag", oneDrag);
 }
-
 
 ////////////////////////
 /////// LAYOUT /////////
@@ -318,20 +323,15 @@ var tappedNode;
 //   }
 // }
 
-
-
 function selectNode(node) {
-
-
-  if(node.data("locked")) {
+  if (node.data("locked")) {
     return;
   }
   if (tappedNode) {
     // uncolor previous
-    // TODO TODO TODO TODO TODO make only if it was preivously colored - save time 
+    // TODO TODO TODO TODO TODO make only if it was preivously colored - save time
     // colorAdjacent(tappedNode, false);
     //tappedNode.style({ "border-width": "0px" });
-
     // if (tappedNode === node) {
     //   // if tapped was the tap, set tapped to none
     //   tappedNode = "";
@@ -343,7 +343,7 @@ function selectNode(node) {
     "border-color": "blue",
     "border-width": "8px",
     "border-style": "double",
-    "border-opacity" : 1
+    "border-opacity": 1,
   });
   // if (adjacentNodesInput.checked) {
   //   colorAdjacent(node, true);
@@ -351,48 +351,39 @@ function selectNode(node) {
 
   tappedNode = node;
 
-
   // re color errors
-  if(errors.length > 0) {
-    // re color 
-    errors.forEach(p => p.forEach(e => {
-      if(e !== document.activeElement) {
-        colorNodeOutline(e, "red")
-      }
-
-    }))
-
-
+  if (errors.length > 0) {
+    // re color
+    errors.forEach((p) =>
+      p.forEach((e) => {
+        if (e !== document.activeElement) {
+          colorNodeOutline(e, "red");
+        }
+      })
+    );
   }
-
 }
-
 
 const selectCell = (cell) => selectNode(cy.getElementById(cell.id.slice(-2)));
 
-
-// TODO 
+// TODO
 function colorNodeOutline(cell, color) {
-
   //console.log(errors)
 
   let vertex = cy.getElementById(cell.id.slice(-2));
-  if(color) {
-  vertex.style({
-    "border-color": color,
-    "border-width": "8px",
-    "border-style": "double",
-    "border-opacity": 1
-  });
-} else {
-  vertex.style({ "border-width": "0px" });
+  if (color) {
+    vertex.style({
+      "border-color": color,
+      "border-width": "8px",
+      "border-style": "double",
+      "border-opacity": 1,
+    });
+  } else {
+    vertex.style({ "border-width": "0px" });
+  }
 }
 
-
-
-}
-
-// TODO for when I get back before dinner 
+// TODO for when I get back before dinner
 /*
 
 - et rid of adjacent nodes
@@ -400,31 +391,26 @@ function colorNodeOutline(cell, color) {
 
 */
 
-
-
 function colorNode(node, empty) {
-
-  if(empty) {
-    node.style({"label" : `${node.data("number")}`, "background-color" : "#666", "opacity": 1});
+  if (empty) {
+    node.style({
+      label: `${node.data("number")}`,
+      "background-color": "#666",
+      opacity: 1,
+    });
     return;
-    
   }
-  
-  if(document.querySelector("#labelNodes_checkbox").checked) {
-    node.style({"label" : `${node.data("number")}`})
 
+  if (document.querySelector("#labelNodes_checkbox").checked) {
+    node.style({ label: `${node.data("number")}` });
   }
-  tappedNode.style({"background-color": `${color_map[node.data("number")]}`, "opacity": .8});
-
-  
-
-
-
+  tappedNode.style({
+    "background-color": `${color_map[node.data("number")]}`,
+    opacity: 0.8,
+  });
 }
 
 function tmpGraphNavListeners() {
-
-
   cy.on("tap", "node", (evt) => {
     // select in sudoku
     let cell = document.querySelector(`#cell${evt.target.data("id")}`);
@@ -432,52 +418,45 @@ function tmpGraphNavListeners() {
     // on focus event listner will trigger and call the selectNode function from sudoku.js
   });
 
+  document.addEventListener("keydown", (evt) => {
+    if (
+      (evt.key === "1" ||
+        evt.key === "2" ||
+        evt.key === "3" ||
+        evt.key === "4" ||
+        evt.key === "5" ||
+        evt.key === "6" ||
+        evt.key === "7" ||
+        evt.key === "8" ||
+        evt.key === "9") &&
+      !document.querySelector("#notesCheckbox").checked
+    ) {
+      if (tappedNode) {
+        tappedNode.data("number", evt.key);
 
+        colorNode(tappedNode, false);
+        // if(document.querySelector("#labelNodes_checkbox").checked) {
+        //   tappedNode.style({"label" : `${tappedNode.data("number")}`})
 
-document.addEventListener("keydown", (evt) => {
-  
-
-
-  if((evt.key === "1" || evt.key === "2" || evt.key === "3" || evt.key === "4" || evt.key === "5" || evt.key === "6" || evt.key === "7" || evt.key === "8" || evt.key === "9") && !document.querySelector("#notesCheckbox").checked) {
-    if(tappedNode) {
-      
-      tappedNode.data("number", evt.key);
-  
-
-      colorNode(tappedNode, false);
-      // if(document.querySelector("#labelNodes_checkbox").checked) {
-      //   tappedNode.style({"label" : `${tappedNode.data("number")}`})
-
-      // }
-      // tappedNode.style({"background-color": `${color_map[tappedNode.data("number")]}`, "opacity": .8});
-
-    
+        // }
+        // tappedNode.style({"background-color": `${color_map[tappedNode.data("number")]}`, "opacity": .8});
+      }
     }
-  }
-  if(evt.key === "Backspace" || evt.key === "Delete") {
-
-    if(tappedNode) {
-      tappedNode.data("number", "");
-      colorNode(tappedNode, true)
-      // tappedNode.style({"label" : `${tappedNode.data("number")}`, "background-color" : "#666", "opacity": 1})
-
-
+    if (evt.key === "Backspace" || evt.key === "Delete") {
+      if (tappedNode) {
+        tappedNode.data("number", "");
+        colorNode(tappedNode, true);
+        // tappedNode.style({"label" : `${tappedNode.data("number")}`, "background-color" : "#666", "opacity": 1})
+      }
     }
-  }
-});
-
-
+  });
 }
-
-
-
-
 
 // cy.on("tap", "node", (evt) => {
 //   var node = evt.target;
 //   if (tappedNode) {
 //     // uncolor previous
-//     // TODO TODO TODO TODO TODO make only if it was preivously colored - save time 
+//     // TODO TODO TODO TODO TODO make only if it was preivously colored - save time
 
 //     colorAdjacent(tappedNode, false);
 //     tappedNode.style({ "border-width": "0px" });
@@ -499,7 +478,6 @@ document.addEventListener("keydown", (evt) => {
 
 //   tappedNode = node;
 
-
 //   // create selection box
 // });
 
@@ -513,67 +491,54 @@ document.addEventListener("keydown", (evt) => {
 
 function edgeColorListener() {
   document
-  .querySelector("#edgeColor_checkbox")
-  .addEventListener("change", (evt) => {
-    if (document.querySelector("#edgeColor_checkbox").checked) {
-      cy.elements('[type = "row"]').style({ "line-color": "green" });
-      cy.elements('[type = "box"]').style({ "line-color": "red" });
-      cy.elements('[type = "col"]').style({ "line-color": "blue" });
-    } else {
-      cy.edges().style({
-        "line-color": "rgb(204,204,204)",
-      });
-    }
-  });
-
+    .querySelector("#edgeColor_checkbox")
+    .addEventListener("change", (evt) => {
+      if (document.querySelector("#edgeColor_checkbox").checked) {
+        cy.elements('[type = "row"]').style({ "line-color": "green" });
+        cy.elements('[type = "box"]').style({ "line-color": "red" });
+        cy.elements('[type = "col"]').style({ "line-color": "blue" });
+      } else {
+        cy.edges().style({
+          "line-color": "rgb(204,204,204)",
+        });
+      }
+    });
 }
 
 function labelNodesListener() {
   var labelNodesInput = document.querySelector("#labelNodes_checkbox");
-labelNodesInput.addEventListener("change", () => {
-  if(!animationRunning) {
-    if (labelNodesInput.checked) {
-      //cy.nodes().style({ "label": "data(number)" });
-      cy.nodes().forEach((node) => node.style({"label" : `${node.data("number")}`}))
-  
-      
+  labelNodesInput.addEventListener("change", () => {
+    if (!animationRunning) {
+      if (labelNodesInput.checked) {
+        //cy.nodes().style({ "label": "data(number)" });
+        cy.nodes().forEach((node) =>
+          node.style({ label: `${node.data("number")}` })
+        );
+      } else {
+        cy.nodes().style({ label: "" });
+      }
     } else {
-      cy.nodes().style({ "label": "" });
-  
+      console.log("here");
+      labelNodesInput.checked = !labelNodesInput.checked;
+      alert("Chilllll, let the animation finish dawg");
     }
-
-  } else {
-    console.log("here")
-    labelNodesInput.checked = !labelNodesInput.checked
-    alert("Chilllll, let the animation finish dawg")
-  }
-
-});
-
+  });
 }
-
 
 function resetGraph() {
   cy.nodes().forEach((node) => {
     // if it is not a locked node
-    if(!node.data("locked")) {
-      // reset node body color 
+    if (!node.data("locked")) {
+      // reset node body color
       node.data("number", "");
       colorNode(node, true);
     }
-    // in all cases - need to reset the border 
-  
+    // in all cases - need to reset the border
+
     node.style({ "border-width": "0px" });
-  })
-
+  });
 }
-
-
-
 
 ////////////////////////
 ///// EDGE COLOR ///////
 ////////////////////////
-
-
-

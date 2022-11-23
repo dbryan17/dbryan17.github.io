@@ -1,351 +1,328 @@
-// TODO TO FINISH PROJECT 
-// fix styling some 
+// TODO TO FINISH PROJECT
+// fix styling some
 // clea up/ seprate files
 // comment code more
 ///////////
 
-
-
-
 function solveListener() {
-  const colorGraph = document.querySelector("#colorGrpah")
-  const solverModal = document.querySelector("#solverModal")
+  const colorGraph = document.querySelector("#colorGrpah");
+  const solverModal = document.querySelector("#solverModal");
   const solveForm = document.querySelector("#solveForm");
   colorGraph.addEventListener("click", (evt) => {
-    if(!animationRunning) {
-      solverModal.hidden = false;
+    if (!animationRunning) {
+      //solverModal.hidden = false;
+      solverModal.classList.remove("hidden");
       colorGraph.hidden = true;
-      document.querySelector("#solverDoneModal").hidden = true
-      cy.resize()
+      //document.querySelector("#solverDoneModal").hidden = true;
+      document.querySelector("#solverDoneModal").classList.add("hidden");
+      cy.resize();
     } else {
-      alert("Chilllll, let the animation finish dawg")
+      alert("Chilllll, let the animation finish dawg");
     }
-  })
+  });
 
   solveForm.addEventListener("submit", (evt) => {
     evt.preventDefault();
     // document.querySelector("#opaque").remove();
-    solverModal.hidden = true;
+    //solverModal.hidden = true;
+    solverModal.classList.add("hidden");
     colorGraph.hidden = false;
     cy.resize();
     graphSolve();
-    
-
-    
-  })
+  });
 
   solveForm.addEventListener("reset", (evt) => {
     evt.preventDefault();
     // document.querySelector("#opaque").remove();
-    solverModal.hidden = true;
+    //solverModal.hidden = true;
+    solverModal.classList.add("hidden");
     colorGraph.hidden = false;
 
-    cy.resize()
-    
-  })
+    cy.resize();
+  });
 }
-
 
 function delay() {
-  console.log("delayed")
+  console.log("delayed");
 }
 
-
-
 function changeNext() {
-
   // stopped midway from button
-  if(!animationRunning) {
-    cy.nodes().filter((el) => !el.data("locked")).forEach((node) => {
-      // was called from reset, so these are not opqaue 
-      if(node.data("number") === "") {
-        node.style({"background-color": "#666", "opacity": 1})
+  if (!animationRunning) {
+    cy.nodes()
+      .filter((el) => !el.data("locked"))
+      .forEach((node) => {
+        // was called from reset, so these are not opqaue
+        if (node.data("number") === "") {
+          node.style({ "background-color": "#666", opacity: 1 });
 
-
-        // was called from button so want these to still be colored
-      } else {
-        node.style({"background-color": `${color_map[node.data("number")]}`, "opacity": .8})
-
-      }
-      
-
-    })
-    endSolve()
+          // was called from button so want these to still be colored
+        } else {
+          node.style({
+            "background-color": `${color_map[node.data("number")]}`,
+            opacity: 0.8,
+          });
+        }
+      });
+    endSolve();
     // console.log("")
   }
 
-  if(i < aniQueue.length) {
-
-
-    aniQueue[i]["node"].style(aniQueue[i]["style"])
+  if (i < aniQueue.length) {
+    aniQueue[i]["node"].style(aniQueue[i]["style"]);
     i++;
     setTimeout(changeNext, aniTime);
-
-
   } else {
-    endSolve()
+    endSolve();
   }
 }
 
 function endSolve() {
-  // reset vars 
+  // reset vars
   animationRunning = false;
-  document.querySelector("#stopAni").hidden = true; 
+  document.querySelector("#stopAni").hidden = true;
   i = 0;
   aniQueue = [];
   count = 0;
-  // add labels if needed 
-  if(document.querySelector("#labelNodes_checkbox").checked) {
+  // add labels if needed
+  if (document.querySelector("#labelNodes_checkbox").checked) {
     cy.nodes().forEach((node) => {
-      node.style({"label" : `${node.data("number")}`})
-
-    })
-    
+      node.style({ label: `${node.data("number")}` });
+    });
   }
   // fill grid
   refillGrid();
-
 }
 
-
-
 document.querySelector("#solverDoneButton").addEventListener("click", () => {
-  // close 
-  document.querySelector("#solverDoneModal").hidden=true;
-  cy.resize();
+  // close
+  //document.querySelector("#solverDoneModal").hidden = true;
+  document.querySelector("#solverDoneModal").classList.add("hidden");
 
-})
+  cy.resize();
+});
 
 document.querySelector("#stopAni").addEventListener("click", () => {
   // stop animation
   animationRunning = false;
-})
-
+});
 
 var animationRunning = false;
 function graphSolve() {
-
   count = 0;
   let start = Date.now();
 
-  let selection = document.querySelector("#algSelect").value
-  console.log(selection)
-  
+  let selection = document.querySelector("#algSelect").value;
+  console.log(selection);
+
   let answer;
-  switch(selection) {
+  switch (selection) {
     case "firstEmpty":
-      answer = backtrackingFirstEmpty()
+      answer = backtrackingFirstEmpty();
       break;
     case "fewestFirst":
-      answer = backtrackingFewestFirst()
+      answer = backtrackingFewestFirst();
       break;
     default:
-      throw new Exception("check the values of algSelect")
+      throw new Exception("check the values of algSelect");
   }
 
   let solverDoneModal = document.querySelector("#solverDoneModal");
 
   // in case of not first alg
-  if(document.querySelector("#solveStats")) {
-    document.querySelector("#solveStats").remove()
-
+  if (document.querySelector("#solveStats")) {
+    document.querySelector("#solveStats").remove();
   }
-  let stats = document.createElement("span");
+  let stats = document.createElement("div");
+  stats.classList.add("option");
   stats.id = "solveStats";
 
+  console.log(answer);
 
-  console.log(answer)
-
-  if(!answer) {
+  if (!answer) {
     // solving algorithim failed
-    stats.innerText = `Solve failed, no valid solution due to user inputted values, sudoku reset`
-    // need to save what the user had before --- in graph 
+    stats.innerText = `Solve failed, no valid solution due to user inputted values, sudoku reset`;
+    // need to save what the user had before --- in graph
   } else {
-    let end = Date.now()
+    let end = Date.now();
     let miliseconds = end - start;
-    stats.innerText = `Completed in ${miliseconds} miliseconds and ${count} step${count === 1 ? "" : "s"}`
+    stats.innerText = `Completed in ${miliseconds} miliseconds and ${count} step${
+      count === 1 ? "" : "s"
+    }`;
   }
 
-  solverDoneModal.insertBefore(stats, solverDoneModal.firstChild)
-  solverDoneModal.hidden = false;
-  cy.resize()
+  solverDoneModal.insertBefore(stats, solverDoneModal.firstChild);
+  //solverDoneModal.hidden = false;
+  solverDoneModal.classList.remove("hidden");
+  cy.resize();
 
-
-
-  if(document.querySelector("#animateColringCheckbox").checked) {
+  if (document.querySelector("#animateColringCheckbox").checked) {
     animationRunning = true;
-    document.querySelector("#stopAni").hidden=false;
+    document.querySelector("#stopAni").hidden = false;
     i = 0;
     aniTime = Math.floor(2000 / aniQueue.length);
-    // starts the animation 
+    // starts the animation
     changeNext();
   } else {
-    // need to color all nodes 
-    cy.nodes().filter((el) => !el.data("locked")).forEach((node) => node.style({"background-color": `${color_map[node.data("number")]}`, "opacity": .8}))
-    endSolve()
+    // need to color all nodes
+    cy.nodes()
+      .filter((el) => !el.data("locked"))
+      .forEach((node) =>
+        node.style({
+          "background-color": `${color_map[node.data("number")]}`,
+          opacity: 0.8,
+        })
+      );
+    endSolve();
   }
-
-  
-
-  
 }
 
 var aniTime;
 var i = 0;
-var aniQueue = []
+var aniQueue = [];
 
 function checkGraph() {
   let bool = true;
   // each node
   cy.nodes().forEach((node) => {
     // get the adjacent colors
-    let adjColors = new Set(); 
-    node.connectedEdges().connectedNodes().filter((el) => el != node).forEach((node) => adjColors.add(node.data("number")));
-    if(adjColors.has(node.data("number"))) {
-      bool = false 
+    let adjColors = new Set();
+    node
+      .connectedEdges()
+      .connectedNodes()
+      .filter((el) => el != node)
+      .forEach((node) => adjColors.add(node.data("number")));
+    if (adjColors.has(node.data("number"))) {
+      bool = false;
     }
-  })
+  });
   return bool;
-
 }
 
 var count = 0;
 function backtrackingFewestFirst() {
-
   // find all uncolored
-  let unclored = cy.nodes().filter((node) => (node.data("number") === ""))
+  let unclored = cy.nodes().filter((node) => node.data("number") === "");
   // if all are colored
-  // this being true would mean that this board is completely correct always if the user 
+  // this being true would mean that this board is completely correct always if the user
   // didn't edit the board at all becuase then there would be exactly one solution, but since the user could have edited
   // it, there may be no solution which means this would trigger but the board be inccorect
-  if(unclored.length === 0) {
+  if (unclored.length === 0) {
     // now check if it is correct
-    console.log(checkGraph())
-    return checkGraph()
+    console.log(checkGraph());
+    return checkGraph();
   }
 
-  // find the possiblities for all of the number of vertices 
+  // find the possiblities for all of the number of vertices
   let possibleNodes = unclored.map((node) => {
-    let colors = getPossibleColors(node)
+    let colors = getPossibleColors(node);
     let newObj = {
       node: node,
       possiblities: colors,
-      length: colors.length
-    }
-    return newObj
+      length: colors.length,
+    };
+    return newObj;
   });
 
-  // sort by fewest options first 
-  let sorted = possibleNodes.sort((a,b) => {
+  // sort by fewest options first
+  let sorted = possibleNodes.sort((a, b) => {
     return a.length - b.length;
-  })
+  });
 
-  for(let i = 0; i < sorted.length; i++) {
-    let node = sorted[i]["node"]
-    let possibleColors = sorted[i]["possiblities"]
-    for(let j = 0; j < possibleColors.length; j++) {
+  for (let i = 0; i < sorted.length; i++) {
+    let node = sorted[i]["node"];
+    let possibleColors = sorted[i]["possiblities"];
+    for (let j = 0; j < possibleColors.length; j++) {
       let color = possibleColors[j];
       count++;
-      node.data("number", color); 
-      aniQueue.push({node: node, style: {
-  
+      node.data("number", color);
+      aniQueue.push({
+        node: node,
+        style: {
           "background-color": `${color_map[node.data("number")]}`,
-          "opacity": .8
-  
+          opacity: 0.8,
+        },
+      });
 
-      }});
-
-      if(backtrackingFewestFirst()) {
+      if (backtrackingFewestFirst()) {
         return true;
       }
     }
 
     // didnt work reset node
     node.data("number", "");
-    aniQueue.push({node: node, style: {
-
-        "background-color" : "#666", 
-        "opacity": 1
-
-    }})
+    aniQueue.push({
+      node: node,
+      style: {
+        "background-color": "#666",
+        opacity: 1,
+      },
+    });
 
     return false;
   }
-
-
 }
 
-
-
-
 function backtrackingFirstEmpty() {
-
   // find all uncolored vertices
-  let unclored = cy.nodes().filter((node) => (node.data("number") === ""))
-
+  let unclored = cy.nodes().filter((node) => node.data("number") === "");
 
   // if all are colored
-  // this being true would mean that this board is completely correct always if the user 
+  // this being true would mean that this board is completely correct always if the user
   // didn't edit the board at all becuase then there would be exactly one solution, but since the user could have edited
   // it, there may be no solution which means this would trigger but the board be inccorect
-  if(unclored.length === 0) {
-
-    console.log("here")
+  if (unclored.length === 0) {
+    console.log("here");
     // now check if it is correct
-    return checkGraph()
-    
-
+    return checkGraph();
   }
 
-  
-
-  for(let i = 0; i < unclored.length; i++) {
-    let node = unclored[i]
-    let possibleColors = getPossibleColors(node)
-    for(let j = 0; j < possibleColors.length; j++) {
+  for (let i = 0; i < unclored.length; i++) {
+    let node = unclored[i];
+    let possibleColors = getPossibleColors(node);
+    for (let j = 0; j < possibleColors.length; j++) {
       let color = possibleColors[j];
       count++;
-      node.data("number", color); 
-      aniQueue.push({node: node, style: {
-  
+      node.data("number", color);
+      aniQueue.push({
+        node: node,
+        style: {
           "background-color": `${color_map[node.data("number")]}`,
-          "opacity": .8
-  
+          opacity: 0.8,
+        },
+      });
 
-      }});
-
-      if(backtrackingFirstEmpty()) {
+      if (backtrackingFirstEmpty()) {
         return true;
       }
     }
 
     // didnt work reset node
     node.data("number", "");
-    aniQueue.push({node: node, style: {
-
-        "background-color" : "#666", 
-        "opacity": 1
-
-    }})
+    aniQueue.push({
+      node: node,
+      style: {
+        "background-color": "#666",
+        opacity: 1,
+      },
+    });
 
     return false;
   }
-
-
 }
 
 function getPossibleColors(node) {
-
   let adjColors = new Set();
-  
-  node.connectedEdges().connectedNodes().forEach((node) => adjColors.add(node.data("number")));
 
-  adjColors.delete("")
+  node
+    .connectedEdges()
+    .connectedNodes()
+    .forEach((node) => adjColors.add(node.data("number")));
+
+  adjColors.delete("");
 
   // numbers is array of numbers 1 thorugh 9 from generator global vars
-  let poss = numbers.filter((num) => !adjColors.has(num))
+  let poss = numbers.filter((num) => !adjColors.has(num));
 
-  return poss
-
+  return poss;
 }
-
