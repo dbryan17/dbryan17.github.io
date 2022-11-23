@@ -1,147 +1,193 @@
-<!-- 
-    TODOTODOTOD
-    make it look cleaner
--->
-
 <!DOCTYPE html>
 
 <html land="en">
-    <head>
+  <head>
+    <link rel="stylesheet" href="sudoku.css?3" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+  </head>
 
-        <link rel="stylesheet" href="sudoku.css?3">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
-
-    </head>
-
-    <body>
-      <div id="container" class="start">
-        <div id="header">
-          <h2>Sudoku Graph Visulizer, Solver, and Player</h2>
-          <h3>Graph Theory Final Project</h3>
-          <h4>Cody Bryan</h4>
+  <body>
+    <div id="container" class="start">
+      <div id="header">
+        <h2>Sudoku Graph Visulizer, Solver, and Player</h2>
+        <h3>Graph Theory Final Project</h3>
+        <h4>Cody Bryan</h4>
+      </div>
+      <div id="range-container">
+        <p>Enter the amount of given digits for the Sudoku</p>
+        <form id="inputForm">
+          <!-- https://stackoverflow.com/questions/10004723/html5-input-type-range-show-range-value -->
+          <input
+            type="range"
+            name="amountRange"
+            id="slider"
+            min="17"
+            max="80"
+            value="30"
+            oninput="this.form.amountInput.value=this.value"
+          />
+          <input
+            type="number"
+            name="amountInput"
+            id="numberinput"
+            min="17"
+            max="80"
+            value="30"
+            oninput="this.form.amountRange.value=this.value"
+          />
+          <input type="submit" value="Play" id="playbtn" />
+        </form>
+      </div>
+      <div id="sudoku-container" class="start">
+        <div id="options-container">
+          <div id="sudoku-only" class="modalContainer">
+            <div id="notes-checkbox-container" class="option"></div>
+            <div id="help-button-container" class="option"></div>
+          </div>
+          <div id="both-options" class="modalContainer">
+            <div class="option">
+              <button id="instructionBtn">Show/Hide Instructions</button>
+            </div>
+            <div id="reset-button-container" class="option"></div>
+          </div>
         </div>
-            <div id="range-container">
-                <p>Enter the amount of given digits for the Sudoku</p>
-                <form id="inputForm">
-                    <!-- https://stackoverflow.com/questions/10004723/html5-input-type-range-show-range-value -->
-                    <input type="range" name="amountRange" id="slider" min="17" max="80" value="30" oninput="this.form.amountInput.value=this.value" />
-                    <input type="number" name="amountInput" id="numberinput" min="17" max="80" value="30" oninput="this.form.amountRange.value=this.value" />
-                    <input type="submit" value="Play" id="playbtn">
-                </form>
-                
 
-            </div>
-            <div id="sudoku-container" class="start">
-              <div id="options-container">
-                <div id="sudoku-only" class="modalContainer">
-                  <div id="notes-checkbox-container" class="option"></div>
-                  <div id="help-button-container" class="option"></div>
+        <div id="grid-container"></div>
+      </div>
 
-                </div>
-                <div id="both-options" class="modalContainer">
-                  <div id="reset-button-container" class="option"></div>
-                </div>
-                
-
-              </div>
-      
-
-              <div id="grid-container"></div>
-            
-
-
-            </div>
-            <!-- <div id="help-section-container">
-                
-            </div> -->
-      
-
-        <div id="graph-container" class="start">
-          <div id="cy" hidden></div>
-        <div id="graph-options" class="modalContainer"hidden>
+      <div id="cy" hidden></div>
+      <div id="graph-options-outer" class="hidden">
+        <div id="graph-options" class="modalContainer">
           <div id="layout-options" class="option">
             <label for="layouts">Choose a layout:</label>
             <select name="layouts" id="layouts_select">
               <option value="grid" selected>Grid</option>
               <option value="circle">Circle</option>
             </select>
-            <input type="checkbox" id="animate_checkbox" name="animate" checked />
+            <input
+              type="checkbox"
+              id="animate_checkbox"
+              name="animate"
+              checked
+            />
             <label for="animate">Animate Layout Change</label>
           </div>
           <div id="edge-options" class="option">
             <input
-            type="checkbox"
-            id="edgeColor_checkbox"
-            name="edgeColor"
-            unchecked
-          />
-          <label for="edgeColor">Color Edges</label>
+              type="checkbox"
+              id="edgeColor_checkbox"
+              name="edgeColor"
+              unchecked
+            />
+            <label for="edgeColor">Color Edges</label>
           </div>
 
           <!-- <input
-            type="checkbox"
-            id="adjacentNodes_checkbox"
-            name="adjacentNodes"
-            unchecked
-          />
-          <label id="adjacentNodes_label" for="adjacentNodes"
-            >Show Adjacent Nodes On Select</label
-          > -->
+              type="checkbox"
+              id="adjacentNodes_checkbox"
+              name="adjacentNodes"
+              unchecked
+            />
+            <label id="adjacentNodes_label" for="adjacentNodes"
+              >Show Adjacent Nodes On Select</label
+            > -->
 
           <div id="label-options" class="option">
             <input
-            type="checkbox"
-            id="labelNodes_checkbox"
-            name="labelNodes"
-            unchecked
-          />
-          <label id="labelNodes_label" for="labelNodes"
-            >Label Nodes With Number</label
-          >
-
+              type="checkbox"
+              id="labelNodes_checkbox"
+              name="labelNodes"
+              unchecked
+            />
+            <label id="labelNodes_label" for="labelNodes"
+              >Label Nodes With Number</label
+            >
           </div>
 
           <div id="color-options" class="option">
-            <input type="submit" value="Solve sudoku with graph coloring" id="colorGrpah">
+            <input
+              type="submit"
+              value="Solve sudoku with graph coloring"
+              id="colorGrpah"
+            />
           </div>
 
           <div id="reset-options" class="option">
-            <input type="submit" value="Reset Layout" id="resetLayout_btn" hidden>
-          </div>
-
-          </div>
-
-          <div class="modalContainer" id="solverModal" hidden>
-            <form id="solveForm">
-              <label for="alg">Choose a coloring algorithim</label>
-                <select name="alg" id="algSelect">
-                  <option value="fewestFirst">backtracking - color fewest options first</option>
-                  <option value="firstEmpty">backtracking - color first empty</option>
-                </select>
-                <input type="checkbox" id="animateColringCheckbox" name="animateColor" checked>
-                <label for="animateColor">Animate</label>
-                <input type="submit" value="Solve">
-                <input type="reset" value="Cancel">
-            </form>
-          </div>
-          <div class="modalContainer" id="solverDoneModal"hidden>
-            <button id="stopAni" hidden>Stop Animation</button>
-            <button id="solverDoneButton">Close</button>  
-          </div>
-          <div class="modalContainer" id="selectionContainer" hidden>
+            <input
+              type="submit"
+              value="Reset Layout"
+              id="resetLayout_btn"
+              hidden
+            />
           </div>
         </div>
-        
+
+        <div class="modalContainer hidden" id="solverModal">
+          <form id="solveForm">
+            <div id="algorithimCon" class="option">
+              <label for="alg">Choose a coloring algorithim:</label>
+              <div>
+                <select name="alg" id="algSelect">
+                  <option value="fewestFirst">
+                    backtracking - color fewest options first
+                  </option>
+                  <option value="firstEmpty">
+                    backtracking - color first empty
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div id="algAnimateCon" class="option">
+              <input
+                type="checkbox"
+                id="animateColringCheckbox"
+                name="animateColor"
+                checked
+              />
+              <label for="animateColor">Animate</label>
+            </div>
+            <div class="option">
+              <input type="submit" value="Solve" />
+            </div>
+            <div class="option">
+              <input type="reset" value="Cancel" />
+            </div>
+          </form>
+        </div>
+        <div class="modalContainer hidden" id="solverDoneModal">
+          <div class="option">
+            <button id="stopAni" hidden>Stop Animation</button>
+          </div>
+          <div class="option">
+            <button id="solverDoneButton">Close</button>
+          </div>
+        </div>
+        <div class="modalContainer" id="selectionContainer" hidden></div>
       </div>
-
+      <div id="instructions" class="hidden">
+        <h3 id="instHead">Instructions</h3>
+        <ul id="instBody">
+          <li>Use the tab key to move in and out of notes mode</li>
+          <li>Get help on the puzzle with the help button</li>
+          <li>Navigate graph and grid with arrow keys or wasd</li>
+          <li>
+            Enter number/color in grid and graph by selecting cell<br />or node
+            and entering a number
+          </li>
+          <li>Reset all inputs with the reset button</li>
+          <li>Change graph apperance with the selections box</li>
+          <li>
+            See how graph coloring algorithims can solve the puzzle by<br />clicking
+            "Solve sudoku with graph coloring"
+          </li>
+        </ul>
       </div>
-        <script src="graph.js"></script>
-        <script src="boardsJS.js"></script>
-        <script src="generator.js?3"></script>
-        <script src="strats.js?3"></script>
-        <script src="sudoku.js?3"></script>
-        <script src="graphSolve.js"></script>
-
-    </body>
-
+    </div>
+    <script src="graph.js"></script>
+    <script src="boardsJS.js"></script>
+    <script src="generator.js?3"></script>
+    <script src="strats.js?3"></script>
+    <script src="sudoku.js?3"></script>
+    <script src="graphSolve.js"></script>
+  </body>
 </html>

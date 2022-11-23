@@ -1,3 +1,9 @@
+/*
+TODO 
+- add instructions
+
+
+*/
 
 /* page container styling */
 #container {
@@ -10,12 +16,11 @@
   flex-direction: column;
 }
 
-
 /* sudoku container and childern (other than grid) styling*/
 #sudoku-container {
-  display:flex;
+  display: flex;
   flex-direction: column;
-  margin: 10px;
+  /* margin-right: 10px; */
 }
 
 #sudoku-container.start {
@@ -25,6 +30,7 @@
 #options-container {
   display: flex;
   justify-content: space-between;
+  width: 580px;
 }
 
 #sudoku-only {
@@ -39,41 +45,131 @@
   padding: 5px;
 }
 
-
 /* grid will alwasy be 580x580 based on chilern styling*/
 #grid-container {
-    margin: 5px -2px;
-    width: 580px;
-    height: 580px;
+  margin: 5px -2px;
+  width: 580px;
+  height: 580px;
 }
 
-
-
-
-
-/* graph container and childern styling */
+/* graph container and childern styling
 #graph-container {
-  display:flex;
-  flex-direction: column;
+  display: flex;
+  flex-direction: row;
   margin: 10px;
+} */
+
+/* #graph-container.start {
+  display: none;
+} */
+
+#graph-options-outer {
+  display: flex;
+  flex-direction: column;
 }
 
-#graph-container.start {
+#graph-options-outer.hidden {
   display: none;
 }
 
-#options {
-
+@media (max-width: 1695px) {
+  #graph-options-outer {
+    flex-direction: row;
+  }
+  #graph-options {
+    margin-bottom: 0px !important;
+    margin-right: 5px;
+  }
+  #solverModal {
+    margin-bottom: 0px !important;
+    margin-right: 5px;
+  }
+  #solverDoneModal {
+    margin-bottom: 0px !important;
+    margin-right: 5px;
+  }
 }
 
+@media (max-width: 1314px) {
+  /* need to make everything but the cy container get some left margin*/
+  #container {
+    flex-direction: column;
+  }
+  #sudoku-container {
+    margin-left: 40px;
+  }
+  #graph-options-outer {
+    margin-left: 40px;
+  }
+  #instructions {
+    margin-left: 40px !important;
+  }
+}
+
+/* the padding of all layouts I set is 30px, so 580 + 60 will be graph size - want it bigger */
 #cy {
-  margin: 5px 0px;
-  width: 700px;
-  height: 700px;
+  margin: -5px 5px 5px 3px;
+  width: 670px;
+  height: 670px;
 }
 
+#graph-options {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
 
+#solverModal {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
 
+#solverModal.hidden {
+  display: none;
+}
+
+#solveForm {
+  display: flex;
+  flex-direction: column;
+}
+
+#algorithimCon {
+  display: flex;
+  flex-direction: column;
+}
+
+#solverDoneModal {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+
+#solverDoneModal.hidden {
+  display: none;
+}
+
+#selectionContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+#instructions {
+  margin: 10px;
+}
+
+#instHead {
+  margin: 0px;
+}
+
+#instBody {
+  margin: 0px;
+}
+
+#instructions.hidden {
+  display: none;
+}
 
 /* random class style*/
 .modalContainer {
@@ -82,97 +178,105 @@
   background-color: #f2f2f2;
 }
 
-
-
-
-
-
-
 /*
 grid styling 
 */
 .row {
-    display: inline-block;
+  display: inline-block;
 }
 .cell {
-    display: inline-block;  
+  display: inline-block;
 }
 
 .textContainer {
-    position: relative;
-    margin: auto;
-    width: 60px;
-    height: 60px;
+  position: relative;
+  margin: auto;
+  width: 60px;
+  height: 60px;
 }
 
 .bigN {
-    position:absolute;
-    background-color: transparent;
-    z-index: 1;
-    border: hidden;
-    outline: none;
-    margin: auto;
-    text-align: center;
-    caret-color: transparent;
-    font-size: 35px;
-    width: 60px;
-    height: 60px;
-    box-sizing: border-box;
-    color: darkslategray;
+  position: absolute;
+  background-color: transparent;
+  z-index: 1;
+  border: hidden;
+  outline: none;
+  margin: auto;
+  text-align: center;
+  caret-color: transparent;
+  font-size: 35px;
+  width: 60px;
+  height: 60px;
+  box-sizing: border-box;
+  color: darkslategray;
 }
 
 .bigN:disabled {
-    color: black;
+  color: black;
 }
 
 .bigN:focus {
-    border: 2px solid blue;
+  border: 2px solid blue;
 }
 
 .notesC {
-    position:absolute;
-    margin: auto;
-    z-index: -1;
-    width: 60px;
-    height: 60px;
-} 
+  position: absolute;
+  margin: auto;
+  z-index: -1;
+  width: 60px;
+  height: 60px;
+}
 
 .notesRow {
-    position: relative;
-    margin: auto;
-    height: 20px;  
+  position: relative;
+  margin: auto;
+  height: 20px;
 }
 
 .note {
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    margin: auto;
-    width: 33.3333%;
-    text-align: center;
-    color: darkslategray;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  margin: auto;
+  width: 33.3333%;
+  text-align: center;
+  color: darkslategray;
 }
 
-.col0, .col3, .col6 {
-    border-left: 3px solid black;
+.col0,
+.col3,
+.col6 {
+  border-left: 3px solid black;
 }
 
-.row0, .row3, .row6 {
-    border-top: 3px solid black;
+.row0,
+.row3,
+.row6 {
+  border-top: 3px solid black;
 }
 
 .col8 {
-    border-right: 3px solid black;
+  border-right: 3px solid black;
 }
 
 .row8 {
-    border-bottom: 3px solid black;
+  border-bottom: 3px solid black;
 }
 
-.col1, .col2, .col4, .col5, .col7, .col8 {
-    border-left: 1px solid black;
+.col1,
+.col2,
+.col4,
+.col5,
+.col7,
+.col8 {
+  border-left: 1px solid black;
 }
 
-.row1, .row2, .row4, .row5, .row7, .row8 {
-    border-top: 1px solid black;
+.row1,
+.row2,
+.row4,
+.row5,
+.row7,
+.row8 {
+  border-top: 1px solid black;
 }
