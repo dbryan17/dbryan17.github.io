@@ -199,8 +199,8 @@ function addLayoutListeners() {
 
     // means it must have been checked
   document
-  .querySelector("#resetLayout_checkbox")
-  .addEventListener("change", (evt) => {
+  .querySelector("#resetLayout_btn")
+  .addEventListener("click", (evt) => {
     var layout = cy.layout({
       name: document.querySelector("#layouts_select").value,
       animate: false,
@@ -230,9 +230,9 @@ function addLayoutListeners() {
 ////////////////////////
 
 function showLayoutReset(show) {
-  document.querySelector("#resetLayout_checkbox").hidden = !show;
-  document.querySelector("#resetLayout_checkbox").checked = false;
-  document.querySelector("#resetLayout_label").hidden = !show;
+  document.querySelector("#resetLayout_btn").hidden = !show;
+  // document.querySelector("#resetLayout_checkbox").checked = false;
+  // document.querySelector("#resetLayout_label").hidden = !show;
 }
 
 var layoutRunning = false;

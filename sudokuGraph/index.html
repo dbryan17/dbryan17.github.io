@@ -14,9 +14,14 @@
     </head>
 
     <body>
-      <div id="container">
+      <div id="container" class="start">
+        <div id="header">
+          <h2>Sudoku Graph Visulizer, Solver, and Player</h2>
+          <h3>Graph Theory Final Project</h3>
+          <h4>Cody Bryan</h4>
+        </div>
             <div id="range-container">
-                <p>Enter the number of givens you would like to start with, under 23 ish will take a while and be quite hard</p>
+                <p>Enter the amount of given digits for the Sudoku</p>
                 <form id="inputForm">
                     <!-- https://stackoverflow.com/questions/10004723/html5-input-type-range-show-range-value -->
                     <input type="range" name="amountRange" id="slider" min="17" max="80" value="30" oninput="this.form.amountInput.value=this.value" />
@@ -26,11 +31,21 @@
                 
 
             </div>
-            <div id="sudoku-container">
+            <div id="sudoku-container" class="start">
+              <div id="options-container">
+                <div id="sudoku-only" class="modalContainer">
+                  <div id="notes-checkbox-container" class="option"></div>
+                  <div id="help-button-container" class="option"></div>
+
+                </div>
+                <div id="both-options" class="modalContainer">
+                  <div id="reset-button-container" class="option"></div>
+                </div>
+                
+
+              </div>
       
-              <div id="notes-checkbox-container"></div>
-              <div id="help-button-container"></div>
-              <div id="reset-button-container"></div>
+
               <div id="grid-container"></div>
             
 
@@ -41,23 +56,28 @@
             </div> -->
       
 
-          <div id="graph-container">
-        <div id="options" hidden>
-          <label for="layouts">Choose a layout:</label>
-          <select name="layouts" id="layouts_select">
-            <option value="grid" selected>Grid</option>
-            <option value="circle">Circle</option>
-          </select>
-          <input type="checkbox" id="animate_checkbox" name="animate" checked />
-          <label for="animate">Animate Layout Change</label>
-          <input
+        <div id="graph-container" class="start">
+          <div id="cy" hidden></div>
+        <div id="graph-options" class="modalContainer"hidden>
+          <div id="layout-options" class="option">
+            <label for="layouts">Choose a layout:</label>
+            <select name="layouts" id="layouts_select">
+              <option value="grid" selected>Grid</option>
+              <option value="circle">Circle</option>
+            </select>
+            <input type="checkbox" id="animate_checkbox" name="animate" checked />
+            <label for="animate">Animate Layout Change</label>
+          </div>
+          <div id="edge-options" class="option">
+            <input
             type="checkbox"
             id="edgeColor_checkbox"
             name="edgeColor"
             unchecked
           />
           <label for="edgeColor">Color Edges</label>
-    
+          </div>
+
           <!-- <input
             type="checkbox"
             id="adjacentNodes_checkbox"
@@ -67,7 +87,9 @@
           <label id="adjacentNodes_label" for="adjacentNodes"
             >Show Adjacent Nodes On Select</label
           > -->
-          <input
+
+          <div id="label-options" class="option">
+            <input
             type="checkbox"
             id="labelNodes_checkbox"
             name="labelNodes"
@@ -76,18 +98,19 @@
           <label id="labelNodes_label" for="labelNodes"
             >Label Nodes With Number</label
           >
-    
-          <input
-            type="checkbox"
-            id="resetLayout_checkbox"
-            name="resetLayout"
-            unchecked
-            hidden
-          />
-          <label id="resetLayout_label" for="resetLayout" hidden
-            >Reset Layout</label
-          >
-          <input type="submit" value="Solve sudoku with graph coloring" id="colorGrpah">
+
+          </div>
+
+          <div id="color-options" class="option">
+            <input type="submit" value="Solve sudoku with graph coloring" id="colorGrpah">
+          </div>
+
+          <div id="reset-options" class="option">
+            <input type="submit" value="Reset Layout" id="resetLayout_btn" hidden>
+          </div>
+
+          </div>
+
           <div class="modalContainer" id="solverModal" hidden>
             <form id="solveForm">
               <label for="alg">Choose a coloring algorithim</label>
@@ -108,7 +131,7 @@
           <div class="modalContainer" id="selectionContainer" hidden>
           </div>
         </div>
-        <div id="cy" hidden></div>
+        
       </div>
 
       </div>
