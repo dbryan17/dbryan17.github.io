@@ -141,8 +141,23 @@ function graphSolve() {
 
   if (!answer) {
     // solving algorithim failed
-    stats.innerText = `Solve failed, no valid solution due to user inputted values, sudoku reset`;
-    // need to save what the user had before --- in graph
+    stats.innerText = `No valid solution due to user inputs, sudoku reset`;
+    solverDoneModal.insertBefore(stats, solverDoneModal.firstChild);
+    //solverDoneModal.hidden = false;
+    solverDoneModal.classList.remove("hidden");
+    cy.resize();
+    // first need to stop any animation that are happening
+    animationRunning = false;
+    ////// HERE
+    // reset sudoku
+    resetGrid();
+
+    // reset graph
+    resetGraph();
+
+    return;
+
+    //
   } else {
     let end = Date.now();
     let miliseconds = end - start;
