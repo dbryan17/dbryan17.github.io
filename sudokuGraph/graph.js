@@ -1,9 +1,22 @@
-///////////////////
-// INITILIZATION //
-///////////////////
-
+/*
+This file is for creating and everyting to do with the graph part of the app except for solving 
+*/
 var cy;
+var color_map = {
+  1: "red",
+  2: "orange",
+  3: "yellow",
+  4: "lime",
+  5: "green",
+  6: "cyan",
+  7: "blue",
+  8: "indigo",
+  9: "violet",
+};
+
+// generates vertices and associated data given a sudoku grid
 function generateVertices(sudoku) {
+  // turns sudoku array of arrays into format needed for graph
   return sudoku.reduce((acc, row, row_idx) => {
     return acc.concat(
       row.map((cell, col_idx) => {
@@ -22,11 +35,15 @@ function generateVertices(sudoku) {
   }, []);
 }
 
+// generates edges
 function generateEdges() {
+  // to be final edge array
   let edgeArray = [];
-
+  // array of objects where each object is set of vertices that is a clique (complete subgraph)
+  // so a box or a row, and the type of that group
   let groups = [];
 
+  // add all of the boxes to the groups
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
       let tmp = [];
@@ -36,9 +53,6 @@ function generateEdges() {
         }
       }
       groups.push({ vs: tmp, type: "box" });
-
-      // get an array of all the these
-      // within each thing - add all vertices in this thing to a collection
     }
   }
 
@@ -60,11 +74,9 @@ function generateEdges() {
     groups.push({ vs: tmp, type: "col" });
   }
 
-  // function to go throught an array of things and generate edges between them, sort of like "make complete"
-
+  // goes through all of the groups and "makes complete" - exactly one edge between each and every other
   groups.forEach((group) => {
-    // now have an array of elements to make complete - of the form "10", "21"
-
+    // array of elements to make complete - of the form "10", "21"
     let vs = group.vs;
 
     for (i = 0; i < vs.length; i++) {
@@ -87,66 +99,13 @@ function generateEdges() {
   return edgeArray;
 }
 
-var color_map = {
-  1: "red",
-  2: "orange",
-  3: "yellow",
-  4: "lime",
-  5: "green",
-  6: "cyan",
-  7: "blue",
-  8: "indigo",
-  9: "violet",
-};
-
-function createSelection() {
-  console.log("creating selection");
-  let selectionContainer = document.querySelector("#selectionContainer");
-  selectionContainer.hidden = false;
-  numbers.forEach((num) => {
-    const parser = new DOMParser();
-
-    const ele = parser.parseFromString(
-      `
-    <div class="option">
-    <span id="${num}colorMapColor" style="color:${color_map[num]}">
-    ${color_map[num]} 
-    </span>
-
-    <span id="${num}colorMapNumber">
-    : ${num}
-    </span>
-    </div>
-    `,
-      "text/html"
-    );
-
-    // style="padingRight: 5px"
-
-    selectionContainer.appendChild(ele.body.firstElementChild);
-
-    // let colorEl = document.createElement("span");
-    // colorEl.id = `${num}colorMapColor`;
-    // colorEl.style.color = color_map[num];
-    // colorEl.innerText = `${color_map[num]}`;
-    // selectionContainer.appendChild(colorEl);
-
-    // let numEl = document.createElement("span");
-    // numEl.id = `${num}colorMapNumber`;
-    // numEl.style.paddingRight = "5px";
-    // numEl.innerText = `:${num}`;
-    // selectionContainer.appendChild(numEl);
-  });
-
-  // append all
-}
-
-// added locked becuase re does this when we do auto solve
+// styles
 var stylesArray = [
   {
     selector: "node",
     style: {
       label: "",
+      // color with the number if locked
       "background-color": (node) =>
         node.data("number") && node.data("locked")
           ? color_map[node.data("number")]
@@ -162,24 +121,24 @@ var stylesArray = [
   },
 ];
 
+// initial layout
 var layout = {
   name: "grid",
   rows: 9,
   cols: 9,
   padding: 30,
   fit: true,
-  padding: 30,
 };
 
+// generates graph
 async function generateGraph(sudoku) {
+  // init cytoscape with optios
   cy = cytoscape({
     container: document.getElementById("cy"),
     style: stylesArray,
     userZoomingEnabled: false,
     userPanningEnabled: false,
     boxSelectionEnabled: false,
-    // If you want to apply the layout on the constructor
-    // you must supply the elements too
     elements: {
       nodes: generateVertices(sudoku),
       edges: generateEdges(),
@@ -187,83 +146,75 @@ async function generateGraph(sudoku) {
     layout: layout,
   });
 
+  // add event listners
   addDragListener();
   addLayoutListeners();
   labelNodesListener();
-  tmpGraphNavListeners();
+  graphNavListeners();
   edgeColorListener();
   solveListener();
 
   return;
 }
 
-var oneDrag = () => {
-  showLayoutReset(true);
-};
-function addDragListener() {
-  cy.one("drag", oneDrag);
-}
-
-function addLayoutListeners() {
-  // means it must have been checked
-  document
-    .querySelector("#resetLayout_btn")
-    .addEventListener("click", (evt) => {
-      var layout = cy.layout({
-        name: document.querySelector("#layouts_select").value,
-        animate: false,
-        fit: true,
-        padding: 30,
-      });
-      layout.run();
-      showLayoutReset(false);
-      cy.removeListener("drag", oneDrag);
-      cy.one("drag", oneDrag);
-    });
-
-  // will run only on changed value
-  document
-    .querySelector("#layouts_select")
-    .addEventListener("input", changeLayout);
-}
-
-///////////////////
-// INITILIZATION //
-///////////////////
-
-////////////////////////
-/////// LAYOUT /////////
-////////////////////////
-
-function showLayoutReset(show) {
-  document.querySelector("#resetLayout_btn").hidden = !show;
-  // document.querySelector("#resetLayout_checkbox").checked = false;
-  // document.querySelector("#resetLayout_label").hidden = !show;
-}
+// listners for layout resetting stuff //
 
 var layoutRunning = false;
 var redo = false;
 var toLayout;
 
-function handleStop() {
-  layoutRunning = false;
-  if (redo === true) {
-    changeLayout();
-  }
+// show layout reset when node is dragged
+var oneDrag = () => {
+  showLayoutReset(true);
+};
+
+// first lisenter for a drag - want to allow for reseting layout
+function addDragListener() {
+  // cy.one is an event listener that only fires once
+  cy.one("drag", oneDrag);
 }
 
-// TODOTODOTODTO
-// function makeLayout(name, animate, onReady, onStop) {}
+// lisenter for resetting and changing layuout
+function addLayoutListeners() {
+  // means it must have been checked
+  document.querySelector("#resetLayout_btn").addEventListener("click", () => {
+    layout = cy.layout({
+      name: document.querySelector("#layouts_select").value,
+      animate: false,
+      fit: true,
+      padding: 30,
+    });
+    layout.run();
+    showLayoutReset(false);
+    // remove and add a new listener that will fire once
+    cy.removeListener("drag", oneDrag);
+    cy.one("drag", oneDrag);
+  });
 
+  // listner for changing layout will run only on changed value
+  document
+    .querySelector("#layouts_select")
+    .addEventListener("input", changeLayout);
+}
+
+// shows/ides layout reset
+function showLayoutReset(show) {
+  document.querySelector("#resetLayout_btn").hidden = !show;
+}
+
+// changes layout from grid to circle and vise versa
 function changeLayout() {
   let layoutSelection = document.querySelector("#layouts_select").value;
+
+  // logic to handle funky user inputs like switching back and forth fast
   if (layoutRunning === true) {
     redo = toLayout !== layoutSelection;
-
     return;
   }
   redo = false;
-  var layout = cy.layout({
+
+  // new layout
+  layout = cy.layout({
     name: layoutSelection,
     animate: document.querySelector("#animate_checkbox").checked,
     fit: true,
@@ -273,6 +224,7 @@ function changeLayout() {
       layoutRunning = true;
       toLayout = layoutSelection;
     },
+    // more logic to handle funky stuff - on stop if we need to do it again call it
     stop: () => {
       layoutRunning = false;
       toLayout = "";
@@ -287,15 +239,8 @@ function changeLayout() {
   cy.one("drag", oneDrag);
 }
 
-////////////////////////
-/////// LAYOUT /////////
-////////////////////////
-
-////////////////////////
-/////// SELECTION //////
-////////////////////////
-
-var tappedNode;
+/////// below is logic for coloring adjacent nodes a certain color to help show
+/////// the nature of the graph - out for now because I thought it was too busy
 
 // var adjacentNodesInput = document.querySelector("#adjacentNodes_checkbox");
 // adjacentNodesInput.addEventListener("change", (evt) => {
@@ -323,20 +268,12 @@ var tappedNode;
 //   }
 // }
 
+var tappedNode;
+// select a given node
 function selectNode(node) {
+  // can't select a "given" node - like in grid
   if (node.data("locked")) {
     return;
-  }
-  if (tappedNode) {
-    // uncolor previous
-    // TODO TODO TODO TODO TODO make only if it was preivously colored - save time
-    // colorAdjacent(tappedNode, false);
-    //tappedNode.style({ "border-width": "0px" });
-    // if (tappedNode === node) {
-    //   // if tapped was the tap, set tapped to none
-    //   tappedNode = "";
-    //   return;
-    // }
   }
 
   node.style({
@@ -345,6 +282,8 @@ function selectNode(node) {
     "border-style": "double",
     "border-opacity": 1,
   });
+
+  ////// more for coloring adjacent /////
   // if (adjacentNodesInput.checked) {
   //   colorAdjacent(node, true);
   // }
@@ -364,12 +303,11 @@ function selectNode(node) {
   }
 }
 
+// when cell is selected in grid - select in graph
 const selectCell = (cell) => selectNode(cy.getElementById(cell.id.slice(-2)));
 
-// TODO
+// color a given node's outline with a given color
 function colorNodeOutline(cell, color) {
-  //console.log(errors)
-
   let vertex = cy.getElementById(cell.id.slice(-2));
   if (color) {
     vertex.style({
@@ -383,14 +321,7 @@ function colorNodeOutline(cell, color) {
   }
 }
 
-// TODO for when I get back before dinner
-/*
-
-- et rid of adjacent nodes
-- highlight errors and help on both sudoku and graph
-
-*/
-
+// color a given node - empty is wether to color it back to "blank"
 function colorNode(node, empty) {
   if (empty) {
     node.style({
@@ -410,7 +341,9 @@ function colorNode(node, empty) {
   });
 }
 
-function tmpGraphNavListeners() {
+// listner for tapping on nodes
+function graphNavListeners() {
+  // cypltoscapes custon listner - for a tap on a node
   cy.on("tap", "node", (evt) => {
     // select in sudoku
     let cell = document.querySelector(`#cell${evt.target.data("id")}`);
@@ -418,7 +351,9 @@ function tmpGraphNavListeners() {
     // on focus event listner will trigger and call the selectNode function from sudoku.js
   });
 
+  // on keydown
   document.addEventListener("keydown", (evt) => {
+    // add color
     if (
       (evt.key === "1" ||
         evt.key === "2" ||
@@ -435,60 +370,19 @@ function tmpGraphNavListeners() {
         tappedNode.data("number", evt.key);
 
         colorNode(tappedNode, false);
-        // if(document.querySelector("#labelNodes_checkbox").checked) {
-        //   tappedNode.style({"label" : `${tappedNode.data("number")}`})
-
-        // }
-        // tappedNode.style({"background-color": `${color_map[tappedNode.data("number")]}`, "opacity": .8});
       }
     }
+    // delete color
     if (evt.key === "Backspace" || evt.key === "Delete") {
       if (tappedNode) {
         tappedNode.data("number", "");
         colorNode(tappedNode, true);
-        // tappedNode.style({"label" : `${tappedNode.data("number")}`, "background-color" : "#666", "opacity": 1})
       }
     }
   });
 }
 
-// cy.on("tap", "node", (evt) => {
-//   var node = evt.target;
-//   if (tappedNode) {
-//     // uncolor previous
-//     // TODO TODO TODO TODO TODO make only if it was preivously colored - save time
-
-//     colorAdjacent(tappedNode, false);
-//     tappedNode.style({ "border-width": "0px" });
-
-//     if (tappedNode === node) {
-//       // if tapped was the tap, set tapped to none
-//       tappedNode = "";
-//       return;
-//     }
-//   }
-//   node.style({
-//     "border-color": "green",
-//     "border-width": "8px",
-//     "border-style": "double",
-//   });
-//   if (adjacentNodesInput.checked) {
-//     colorAdjacent(node, true);
-//   }
-
-//   tappedNode = node;
-
-//   // create selection box
-// });
-
-////////////////////////
-/////// SELECTION //////
-////////////////////////
-
-////////////////////////
-///// EDGE COLOR ///////
-////////////////////////
-
+// edge color listner and colorer
 function edgeColorListener() {
   document
     .querySelector("#edgeColor_checkbox")
@@ -505,6 +399,7 @@ function edgeColorListener() {
     });
 }
 
+// label nodes listener and labeler
 function labelNodesListener() {
   var labelNodesInput = document.querySelector("#labelNodes_checkbox");
   labelNodesInput.addEventListener("change", () => {
@@ -525,6 +420,7 @@ function labelNodesListener() {
   });
 }
 
+// reset graph to original givens
 function resetGraph() {
   cy.nodes().forEach((node) => {
     // if it is not a locked node
@@ -534,11 +430,6 @@ function resetGraph() {
       colorNode(node, true);
     }
     // in all cases - need to reset the border
-
     node.style({ "border-width": "0px" });
   });
 }
-
-////////////////////////
-///// EDGE COLOR ///////
-////////////////////////
