@@ -1,13 +1,11 @@
+/*
+This file contains all logic for initial start up of sudoku grid
+future todo:
+- make a loading message when waiting for the generater to generate a grid 
+*/
 "use strict";
 
-let errors = [];
-
-let help_stage = 0;
-
-let help;
-
-let help_highlights = [];
-
+// function to create the sudoku grid with html
 function createBoard() {
   const table = document.createElement("table");
   table.id = "sudoku-table";
@@ -26,24 +24,12 @@ function createBoard() {
 
       let textContainer = document.createElement("div");
       textContainer.classList.add("textContainer");
-
-      // cell.innerText = 4;
-
       let input = document.createElement("input");
-      // TODO maybe have this be part of cell too or just part of cell
       input.id = `cell${i.toString()}${j.toString()}`;
       input.classList.add("bigN");
       input.type = "text";
-      // input.pattern = "/[1-9]/";
-
       input.maxLength = "1";
-
-      // input.type = "number"
-      // input.min = "1"
-
       input.autocomplete = "off";
-
-      //let notes = document.createElement("input");
 
       let notesContainer = document.createElement("div");
       notesContainer.classList.add("notesC");
@@ -54,17 +40,8 @@ function createBoard() {
         notesContainer.appendChild(notesRow);
         for (let b = 0; b < 3; b++) {
           let note = document.createElement("div");
-
           note.classList.add("note");
-
           note.classList.add(`note${(a + 1) * 3 - (2 - b)}`);
-
-          // let noteT = document.createElement("input")
-          // noteT.classList.add("noteT");
-          // noteT.value = "1"
-
-          // note.appendChild(noteT);
-          //note.innerText="";
           notesRow.appendChild(note);
         }
         textContainer.appendChild(input);
@@ -78,10 +55,66 @@ function createBoard() {
   return table;
 }
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
+// creates the checkox for notes
+function createCheckbox() {
+  const parser = new DOMParser();
+
+  const checkbox = parser.parseFromString(
+    `
+        <div>
+            <input type="checkbox" id="notesCheckbox" name="notesCheckbox">
+            <label for="notesCheckbox">Notes Mode?</label>
+        </div>
+    `,
+    "text/html"
+  );
+  document
+    .querySelector("#notes-checkbox-container")
+    .appendChild(checkbox.body.firstElementChild);
 }
 
+// creates the reset button
+function createResetButton() {
+  const parser = new DOMParser();
+
+  const resetBtn = parser.parseFromString(
+    `
+  <button id="resetbtn" type="button">Reset</button> 
+  `,
+    "text/html"
+  );
+  document
+    .querySelector("#reset-button-container")
+    .appendChild(resetBtn.body.firstElementChild);
+}
+
+// creates the box with colors and numbers
+function createSelection() {
+  let selectionContainer = document.querySelector("#selectionContainer");
+  selectionContainer.hidden = false;
+  numbers.forEach((num) => {
+    const parser = new DOMParser();
+
+    const ele = parser.parseFromString(
+      `
+    <div class="option">
+    <span id="${num}colorMapColor" style="color:${color_map[num]}">
+    ${color_map[num]} 
+    </span>
+
+    <span id="${num}colorMapNumber">
+    : ${num}
+    </span>
+    </div>
+    `,
+      "text/html"
+    );
+    selectionContainer.appendChild(ele.body.firstElementChild);
+  });
+}
+
+// check if a given cell can really have the given number - used for highlighting errors
+// returns the acutally html input - not just a number
 function checkUnq(num, x, y) {
   let toReturn = new Set();
 
@@ -119,6 +152,77 @@ function checkUnq(num, x, y) {
   return toReturn;
 }
 
+// checks if it is a win - this happens everytime a number is added
+function checkWin() {
+  // number added and errors checked, if board is full you are done
+  if (checkF() && errors.length === 0) {
+    // add a win message
+    let win_div = document.createElement("div");
+    win_div.innerText = "YOU WON - NICE JOB";
+    document.querySelector("#container").appendChild(win_div);
+  }
+}
+
+// checks if a board is full
+function checkF() {
+  for (let x = 0; x < 9; x++) {
+    for (let y = 0; y < 9; y++) {
+      if (document.querySelector(`#cell${x}${y}`).value === "") {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+// refills the grid with colors from the graph - called when auto solved with graph colorings is done
+function refillGrid() {
+  // reset notes
+  document.querySelectorAll(".note").forEach((note) => {
+    note.innerHTML = "";
+  });
+
+  // reset help
+  helpReset();
+
+  // reset errors
+  errors = [];
+
+  // go through each cell and add color to number
+  document.querySelectorAll(".bigN").forEach((input) => {
+    if (!input.disabled) {
+      let node = cy.getElementById(input.id.slice(-2));
+      input.value = node.data("number");
+    } else {
+      // recolor
+      input.style.color = "black";
+    }
+  });
+}
+
+// resets the grid
+function resetGrid() {
+  document.querySelectorAll(".bigN").forEach((input) => {
+    if (!input.disabled) {
+      input.value = "";
+    } else {
+      // recolor
+      input.style.color = "black";
+    }
+  });
+  // reset help stuff
+  helpReset();
+
+  // need to reset errors
+  errors = [];
+
+  // now for notes
+  document.querySelectorAll(".note").forEach((note) => {
+    note.innerHTML = "";
+  });
+}
+
+// populate the grid given an array - called on startup
 function populateWithArray(arr) {
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
@@ -133,113 +237,8 @@ function populateWithArray(arr) {
   }
 }
 
-function createCheckbox() {
-  const parser = new DOMParser();
-
-  const checkbox = parser.parseFromString(
-    `
-        <div>
-            <input type="checkbox" id="notesCheckbox" name="notesCheckbox">
-            <label for="notesCheckbox">Notes Mode?</label>
-        </div>
-    `,
-    "text/html"
-  );
-
-  // make this function return this and append it in main
-  document
-    .querySelector("#notes-checkbox-container")
-    .appendChild(checkbox.body.firstElementChild);
-}
-
-function createHelpButton() {
-  const parser = new DOMParser();
-
-  const helpbtn = parser.parseFromString(
-    `
-        <button id="helpbtn" type="button">Help</button> 
-    `,
-    "text/html"
-  );
-
-  document
-    .querySelector("#help-button-container")
-    .appendChild(helpbtn.body.firstElementChild);
-}
-
-function createResetButton() {
-  const parser = new DOMParser();
-
-  const resetBtn = parser.parseFromString(
-    `
-  <button id="resetbtn" type="button">Reset</button> 
-  `,
-    "text/html"
-  );
-  document
-    .querySelector("#reset-button-container")
-    .appendChild(resetBtn.body.firstElementChild);
-}
-
-function oneThroughNine(numStr) {
-  return (
-    ["1", "2", "3", "4", "5", "6", "7", "8", "9"].filter(
-      (num) => numStr === num
-    ).length === 1
-  );
-}
-
-function highlightErrors(num, el) {
-  // set of values that is errors made by new insertion
-  let highlight = checkUnq(
-    num,
-    parseInt(el.id.charAt(4)),
-    parseInt(el.id.charAt(5))
-  );
-  // get rid of this value
-  highlight.delete(el);
-
-  // set all errors back to orginal color
-  errors.forEach((p) =>
-    p.forEach((e) => {
-      if (e.disabled) {
-        e.style.color = "black";
-      } else {
-        e.style.color = "darkslategray";
-      }
-      // only color back if not the selected one
-
-      if (e !== document.activeElement) {
-        colorNodeOutline(e, false);
-      }
-    })
-  );
-
-  // get rid of any errors that this element previously causes
-  errors = errors.filter((p) => p[0] !== el);
-
-  // if there is any new errros
-  if (highlight.size > 0) {
-    // add them to the errors list
-    highlight.forEach((e) => errors.push([el, e]));
-
-    // no errors
-  }
-
-  // set all errors to red
-  errors.forEach((p) => {
-    p[0].style.color = "red";
-    p[1].style.color = "red";
-    // first one is the one that is not the selected one
-    colorNodeOutline(p[1], "red");
-    if (p[0] !== document.activeElement) {
-      colorNodeOutline(p[0], "red");
-    }
-  });
-
-  // highlight.forEach(n => n.style.color = "revert")
-}
-
+// handle a delete - this is needed because the deleting an input html is a little spotty
+// so this makes it so pressing the delete key always works
 function handleDelete(el, notes) {
   if (notes) {
     el.parentElement.querySelector(".notesC").style.display = "inline";
@@ -252,16 +251,12 @@ function handleDelete(el, notes) {
 
 // function called when a number is inputted, here before it actually gets placed - number only inputted when input is empty
 function enterNumber() {
-  // need to handle what happens when it is a junk number
   helpReset();
-
-  // if notes mode - add or delete note -
+  // if notes mode - add or delete note
   if (document.querySelector("#notesCheckbox").checked) {
     // if backsapce, bring back all of the old hidden notes - if there was nothing there orginally, other thing will actaully delete them
     if (this.value == "") {
       handleDelete(this, true);
-      //   this.parentElement.querySelector(".notesC").style.display = "inline";
-      //   highlightErrors(11, this)
     }
 
     // if one through nine, either add or delete
@@ -282,8 +277,6 @@ function enterNumber() {
     // if it is a delete, bring back old hidden notes
     if (this.value == "") {
       handleDelete(this, false);
-      // this.parentElement.querySelector(".notesC").style.display = "inline";
-      // highlightErrors(11, this)
     }
 
     // if not one through nine - set to nothing
@@ -305,21 +298,10 @@ function enterNumber() {
   setTimeout(checkWin, 10);
 }
 
-function checkWin() {
-  // this happens everytime a number is added, so update help button here MOVE THIS
-  // number added and errors checked, if board is full you are done
-  if (checkF() && errors.length === 0) {
-    let win_div = document.createElement("div");
-    win_div.innerText = "YOU WON - NICE JOB";
-    //document.querySelector("#container").insertBefore(win_div, document.querySelector("#sudoku-container"));
-    document.querySelector("#container").appendChild(win_div);
-  }
-}
-
+// function for naviagting around the grid and graph
 function navigate(el, key) {
   let count = 0;
   let c;
-
   // navigate with arrows and WASD
   if (key === "w" || key === "ArrowUp") {
     let row = (((parseInt(el.id.charAt(4)) - 1) % 9) + 9) % 9;
@@ -370,163 +352,21 @@ function navigate(el, key) {
       }
     }
   }
-
+  // focus on the cell
   c.focus();
-
-  //el.style.focus = false;
 }
 
-function checkF() {
-  for (let x = 0; x < 9; x++) {
-    for (let y = 0; y < 9; y++) {
-      if (document.querySelector(`#cell${x}${y}`).value === "") {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-function helpReset() {
-  document.querySelector("#helpbtn").innerText = "Help?";
-  help_stage = 0;
-
-  // reset colors of all highlights
-  help_highlights.forEach((e) => {
-    if (e.disabled) {
-      e.style.color = "black";
-    } else {
-      e.style.color = "darkslategray";
-    }
-    colorNodeOutline(e, false);
-  });
-
-  help_highlights = [];
-}
-
-function helpHighlighter(cords) {
-  cords.forEach((cord) => {
-    help_highlights.push(document.querySelector(`#cell${cord[0]}${cord[1]}`));
-  });
-
-  help_highlights.forEach((el) => {
-    el.style.color = "orange";
-    colorNodeOutline(el, "orange");
-  });
-}
-
-function getHelp() {
-  if (animationRunning) {
-    return;
-  }
-
-  // help = [cell cord ([y, x]), [answer], [cells to highlight]]
-
-  if (help_stage === 0) {
-    help = getInitialHelp();
-  } else if (help_stage === 1) {
-    getMoreHelp(help[2]);
-    let c = document.querySelector(
-      `#cell${help[0][0].toString()}${help[0][1].toString()}`
-    );
-    c.focus();
-  } else if (help_stage === 2) {
-    let c = document.querySelector(
-      `#cell${help[0][0].toString()}${help[0][1].toString()}`
-    );
-    c.parentElement.querySelector(".notesC").style.display = "none";
-    c.value = help[1];
-    helpReset();
-    // maybe make a function for shit to do on insert of a number
-    highlightErrors(help[1], c);
-
-    // stuff for graph ----
-    tappedNode.data("number", help[1]);
-    if (document.querySelector("#labelNodes_checkbox").checked) {
-      tappedNode.style({ label: `${tappedNode.data("number")}` });
-    }
-    tappedNode.style({
-      "background-color": `${color_map[tappedNode.data("number")]}`,
-      opacity: 0.8,
-    });
-
-    setTimeout(checkWin, 10);
-  }
-}
-
-function getMoreHelp(toH) {
-  helpHighlighter(toH);
-  document.querySelector("#helpbtn").innerText = "reveal cell?";
-  help_stage++;
-}
-
-function getInitialHelp() {
-  // solution board is global as solution_b
-
-  // get the current board as array
-  let current_b = [];
-
-  for (let i = 0; i < 9; i++) {
-    let row = [];
-    for (let j = 0; j < 9; j++) {
-      let v = document.querySelector(`#cell${i}${j}`).value;
-      if (v === "") {
-        v = "-1";
-      }
-      row.push(v);
-    }
-    current_b.push(row);
-  }
-
-  // filter out wrong answers
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      if (current_b[i][j] !== solution_b[i][j]) {
-        current_b[i][j] = "-1";
-      }
-    }
-  }
-
-  // TEST
-
-  // MAKE IT RETURN WHAT WE WILL EVENTUALLY HIGHLIGHT TO HELP AND ANSWER AND CELL TO FOCUS ON
-
-  // get a naked single
-
-  let naked_single = helpfcn(current_b);
-
-  //let naked_single = nakedSingle(current_b);
-  if (naked_single) {
-    // make this a function - used in navigate too
-    let c = document.querySelector(
-      `#cell${naked_single[0][0].toString()}${naked_single[0][1].toString()}`
-    );
-    c.focus();
-    document.querySelector("#helpbtn").innerText = "more help?";
-    help_stage = 1;
-    //console.log(naked_single)
-    return naked_single;
-    //helpHighlighter(naked_single[2]);
-  }
-}
-
+// called when the game is started
 async function startGame(givens) {
   const board = createBoard();
+  // get the grid from the generator
   let grid = await fillGrid(givens);
   document.querySelector("#grid-container").appendChild(board);
-  //populateBoard(0);
-
-  // TODO make fill grid return a promise and display loading message here
-
   populateWithArray(grid);
-  // populateWithArray(fillGrid(givens));
-
   createCheckbox();
   createHelpButton();
   createResetButton();
-
-  //////// TRYING GRAPH ///////////
-  // first, create the graph
+  // graph stuff - creates the graph
   document.querySelector("#graph-options-outer").classList.remove("hidden");
   document.querySelector("#cy").hidden = false;
   await generateGraph(grid);
@@ -535,7 +375,7 @@ async function startGame(givens) {
   document.querySelectorAll(".bigN").forEach((el) => {
     // event listner for focus so can naviagte graph too
     el.addEventListener("focus", () => {
-      // for some reason when I put this as the handler, it triggers for every cell at begningg
+      // don't allow clicking if animation is running
       if (animationRunning) {
         alert("Chilllll, let the animation finish dawg");
         el.blur();
@@ -546,7 +386,8 @@ async function startGame(givens) {
     el.addEventListener("blur", () => {
       tappedNode.style({ "border-width": "0px" });
 
-      // re color errors --- this is for when user clicks out and had an eror on selected node - need to color that node, if another node is selected, this gets trigger in selectNode function
+      // re color errors --- this is for when user clicks out and had an eror on selected node -
+      // need to color that node, if another node is selected, this gets trigger in selectNode function
       if (errors.length > 0) {
         // re color
         errors.forEach((p) =>
@@ -557,10 +398,6 @@ async function startGame(givens) {
           })
         );
       }
-
-      // console.log("blur", el)
-      // setTimeout(() => console.log(tappedNode), 20)
-      // console.log(tappedNode)
     });
 
     // on keydown
@@ -600,9 +437,8 @@ async function startGame(givens) {
 
         // if it isn't 1-9, save the old value
 
-        // hard delete the input because sometime the backspace doesn't work ---- TODO - get all instances of backspace stuff
+        // hard delete the input because sometime the backspace doesn't work
       } else if (evt.key === "Backspace" || evt.key === "Delete") {
-        // el.value="";
         el.value = "";
         handleDelete(el, document.querySelector("#notesCheckbox").checked);
       }
@@ -610,8 +446,6 @@ async function startGame(givens) {
 
     // extra checks before adding the value
     el.addEventListener("input", enterNumber);
-
-    // value gets added as normal - could be set to "" now though
   });
 
   // focus on random square
@@ -625,89 +459,35 @@ async function startGame(givens) {
   }
   ce.focus();
 
-  ///// HERE //////
-
   // event listner for help button
   document.querySelector("#helpbtn").addEventListener("click", getHelp);
   // event listner for reset button
   document.querySelector("#resetbtn").addEventListener("click", () => {
     // need to close pop up
-    //document.querySelector("#solverDoneModal").hidden = true;
     document.querySelector("#solverDoneModal").classList.add("hidden");
-
     cy.resize();
     // first need to stop any animation that are happening
     animationRunning = false;
-    ////// HERE
-    // reset sudoku
     resetGrid();
-
-    // reset graph
     resetGraph();
   });
 }
 
-function refillGrid() {
-  // reset notes
-  document.querySelectorAll(".note").forEach((note) => {
-    note.innerHTML = "";
-  });
-
-  // reset help
-  helpReset();
-
-  // reset errors
-  errors = [];
-
-  document.querySelectorAll(".bigN").forEach((input) => {
-    if (!input.disabled) {
-      let node = cy.getElementById(input.id.slice(-2));
-      input.value = node.data("number");
-    } else {
-      // recolor
-      input.style.color = "black";
-    }
-  });
-}
-
-function resetGrid() {
-  document.querySelectorAll(".bigN").forEach((input) => {
-    if (!input.disabled) {
-      input.value = "";
-    } else {
-      // recolor
-      input.style.color = "black";
-    }
-  });
-  // reset help stuff
-  helpReset();
-
-  // need to reset errors
-  errors = [];
-
-  // now for notes
-  document.querySelectorAll(".note").forEach((note) => {
-    note.innerHTML = "";
-  });
-}
-
+// on load
 window.addEventListener("load", () => {
-  // TODO async?  --- make some shit promises - homemade
-
   document.querySelector("#inputForm").addEventListener("submit", (evt) => {
     evt.preventDefault();
-
     let givens = document.querySelector("#slider").value;
-    //evt.preventDefault;
     document.querySelector("#range-container").remove();
     document.querySelector("#header").remove();
     document.querySelector("#container").classList.remove("start");
     document.querySelector("#sudoku-container").classList.remove("start");
-    //document.querySelector("#graph-container").classList.remove("start");
     createSelection();
+    // start game
     startGame(givens);
   });
 
+  // register pressing the tab key for notes mode
   document.addEventListener("keydown", (evt) => {
     if (evt.key === "Tab") {
       evt.preventDefault();
@@ -720,21 +500,15 @@ window.addEventListener("load", () => {
     }
   });
 
+  // toggle the instructions
   var toggleInstructions = true;
   document.querySelector("#instructionBtn").addEventListener("click", () => {
     let instructions = document.querySelector("#instructions");
     if (toggleInstructions) {
-      //console.log(document.querySelector("instructions").classList);
       instructions.classList.remove("hidden");
     } else {
       instructions.classList.add("hidden");
     }
     toggleInstructions = !toggleInstructions;
-
-    // toggle if instructions are hidden
-    // let instructions = document.createElement("div");
-    // instructions.id = "instructionsContainer"
-    // instructions.innerText = "You can move around with arrow keys and switch in and out of notes mode with the tab key"
-    // document.querySelector("#container").appendChild(instructions);
   });
 });
