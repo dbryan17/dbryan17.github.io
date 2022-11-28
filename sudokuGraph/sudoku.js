@@ -388,7 +388,7 @@ async function startGame(givens) {
     el.addEventListener("focus", () => {
       // don't allow clicking if animation is running
       if (animationRunning) {
-        alert("Chilllll, let the animation finish dawg");
+        alert("Let the animation finish before enterning values");
         el.blur();
       } else {
         selectCell(el);

@@ -17,7 +17,7 @@ function solveListener() {
       // in case it changed the graphs position - tell it to resize so it handles clicks appropiately
       cy.resize();
     } else {
-      alert("Chilllll, let the animation finish dawg");
+      alert("Let the animation finish before enterning values");
     }
   });
 
