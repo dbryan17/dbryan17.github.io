@@ -415,7 +415,7 @@ function labelNodesListener() {
     } else {
       console.log("here");
       labelNodesInput.checked = !labelNodesInput.checked;
-      alert("Chilllll, let the animation finish dawg");
+      alert("Let the animation finish before enterning values");
     }
   });
 }
