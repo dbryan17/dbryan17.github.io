@@ -213,6 +213,17 @@ function resetGrid() {
   // reset help stuff
   helpReset();
 
+  // need to go through errors and set the color back to black
+  errors.forEach((p) => {
+    p.forEach((e) => {
+      if (e.disabled) {
+        e.style.color = "black";
+      } else {
+        e.style.color = "darkslategray";
+      }
+    });
+  });
+
   // need to reset errors
   errors = [];
 
