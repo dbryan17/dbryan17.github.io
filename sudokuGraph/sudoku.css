@@ -75,6 +75,7 @@ TODO
 @media (max-width: 1695px) {
   #graph-options-outer {
     flex-direction: row;
+    margin-left: 610px;
   }
   #graph-options {
     margin-bottom: 0px !important;
@@ -88,6 +89,7 @@ TODO
     margin-bottom: 0px !important;
     margin-right: 5px;
   }
+
 }
 
 @media (max-width: 1314px) {
