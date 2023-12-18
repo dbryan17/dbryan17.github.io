@@ -1,0 +1,79 @@
+
+
+<!DOCTYPE html>
+
+<html land="en">
+    <head>
+
+
+    </head>
+
+    <body>
+        <div class="container">
+          <div>
+          <label for="input">Enter text here:</label>
+          <input type="text" id="input" name="input">
+          <button id="decodebtn">Deocode</button>
+          <button id="clearbtn">Clear</button>
+          </div>
+          <br />
+          <div>
+          <label for="output">Decoded text:</label>
+          <input type="text" id="output" name="output" readonly>
+          </div>
+          
+            
+         
+        </div>
+        <script>
+          const conversion = {
+            "A": 7,
+            "B": 24,
+            "C": 10,
+            "D": 2,
+            "E": 21,
+            "F": 20,
+            "G": 23,
+            "H": 5,
+            "I": 19,
+            "J": 22,
+            "K": 11,
+            "L": 7,
+            "M": 14,
+            "N": 3,
+            "O": 26,
+            "P": 13,
+            "Q": 18,
+            "R": 16,
+            "S": 1,
+            "T": 6,
+            "U": 8,
+            "V": 12,
+            "W": 4,
+            "X": 9,
+            "Y": 15,
+            "Z": 25
+          }
+
+          document.querySelector("#decodebtn").addEventListener("click", () => {
+            let inputVal = document.querySelector("#input").value.toUpperCase();
+            console.log(inputVal)
+            let decoded = "";
+            for(let i = 0; i < inputVal.length; i++) {
+              decoded += conversion[inputVal[i]];
+            }
+            document.querySelector("#output").value = decoded;
+
+          });
+
+          document.querySelector("#clearbtn").addEventListener("click", () => {
+            document.querySelector("#input").value = '';
+            document.querySelector("#output").value = '';
+          })
+
+        </script>
+
+
+    </body>
+
+</html>
