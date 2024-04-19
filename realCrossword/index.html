@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div>
+      <div>
+        <label for="width">Width: </label>
+        <input type="number" name="width" id="widthInput" min="3" value="4" />
+        <label for="height">Height: </label>
+        <input type="number" name="height" id="heightInput" min="3" value="4" />
+      </div>
+      <div>
+        <br />
+        <button id="createGridBtn">Create Grid</button>
+      </div>
+      <div>
+        <br />
+        <button id="blackSquareBtn">Insert Black Squares</button>
+        <button id="lettersBtn">Insert Given Letters</button>
+        <button id="lockBtn">Lock</button>
+      </div>
+      <div>
+        <br />
+        <button id="fillBtn">Fill</button>
+      </div>
+      <!-- <button id="generateBtn">Generate 4x4 crossword</button> -->
+      <br />
+      <div id="container"></div>
+    </div>
+    <script src="./data/trie.js"></script>
+    <script src="./data/smalltrie.js"></script>
+    <script src="./data/commontrie.js"></script>
+    <!-- <script src="./calcCw.js"></script> -->
+    <script src="./new/newCalcCw.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
